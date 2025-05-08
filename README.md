@@ -8,7 +8,7 @@ Este proyecto pertenece a la materia Análisis y Diseño de Sistemas (2025) de l
 
  El repositorio cuenta con información de cada una de las etapas:
 
-*  <a href="docs/lluvia-ideas.md">Lluvia de ideas (etapa inicial)</a>
+*  <a href="docs/ideas.md">Lluvia de ideas (etapa inicial)</a>
 *  <a href="docs/Billetera virtual - HistoryUsers.pdf">Historias de usuario</a>
 *  <a href="docs/Billetera virtual - Proyecto AyDS 2025.pdf">Especificación (Documento SRS)</a>
 *  <a href="docs/DiagramaUML.png">Diagrama de clase UML</a> 
