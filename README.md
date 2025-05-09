@@ -11,7 +11,7 @@ Este proyecto pertenece a la materia Análisis y Diseño de Sistemas (2025) de l
 *  <a href="docs/ideas.md">Lluvia de ideas (etapa inicial)</a>
 *  <a href="docs/Billetera virtual - HistoryUsers.pdf">Historias de usuario</a>
 *  <a href="docs/Billetera virtual - Proyecto AyDS 2025.pdf">Especificación (Documento SRS)</a>
-*  <a href="docs/DiagramaUML.png">Diagrama de clase UML</a> 
+*  <a href="docs/diagrama_uml.png">Diagrama de clase UML</a> 
 <h2>🧐 Features</h2>
 
 Algunas de las funcionalidades del proyecto:
