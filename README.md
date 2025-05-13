@@ -14,7 +14,7 @@ Sigue estos pasos para levantar la aplicación en tu entorno local usando Docker
 
 1. **Clona el repositorio**
    ```bash
-   git clone https://github.com/tu-usuario/billetera-virtual.git
+   git clone https://github.com/JoacoBal/Billetera-Virtual.git
    cd billetera-virtual
 2. **Construye y levanta los servicios**
    ```bash
