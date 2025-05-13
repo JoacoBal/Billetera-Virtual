@@ -4,6 +4,38 @@
 
 Este proyecto pertenece a la materia Análisis y Diseño de Sistemas (2025) de la <a href="https://www.unrc.edu.ar">Universidad Nacional de Río Cuarto</a>.
 
+<h2>🚀 Cómo iniciar el proyecto localmente</h2>
+
+🛠️ Requisitos previos
+Asegúrate de tener instalado en tu máquina:
+* <a href="https://www.docker.com/get-started/">Docker</a>
+
+Sigue estos pasos para levantar la aplicación en tu entorno local usando Docker:
+
+1. **Clona el repositorio**
+   ```bash
+   git clone https://github.com/tu-usuario/billetera-virtual.git
+   cd billetera-virtual
+2. **Construye y levanta los servicios**
+   ```bash
+   docker compose build
+   ```
+   ```bash
+   docker compose up app
+   ```
+3. **Crea la base de datos**
+   ```bash
+   docker compose exec app bundle exec rake db:create
+   ```
+
+El servicio estará inicializado en http://localhost:8000
+
+Para acceder a la consola interactiva de Ruby y probar lógica:
+```bash
+docker compose exec app bundle exec irb -I. -r server.rb
+```
+
+
 <h2>📖 Documentation </h2>
 
  El repositorio cuenta con información de cada una de las etapas:
