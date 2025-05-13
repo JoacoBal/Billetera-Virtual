@@ -27,6 +27,13 @@ Algunas de las funcionalidades del proyecto:
   
 <h2>💻 Built with</h2>
 
+Lenguajes utilizados:
+
+*   Ruby - Backend
+
 Tecnologías utilizadas:
 
-*   Ruby
+*   Sinatra - Framework web minimalista
+*   SQLite3 – Base de datos
+*   ActiveRecord – ORM para gestionar interacciones con la base de datos
+*   Docker – Contenerización de la aplicación
