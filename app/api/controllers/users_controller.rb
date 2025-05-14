@@ -1,16 +1,17 @@
 require 'sinatra'
 require 'json'
 require_relative '../models/user'
+require_relative '../config/constants'
 
 # Obtener todos los usuarios
-get '/users' do
+get "#{AppConfig::API_BASE_PATH}/users" do
   users = User.all
   content_type :json
   users.to_json
 end
 
 # Crear un nuevo usuario
-post '/users' do
+post "#{AppConfig::API_BASE_PATH}/users" do
   data = JSON.parse(request.body.read)
   user = User.new(data)
   if user.save
@@ -25,7 +26,7 @@ post '/users' do
 end
 
 # Obtener un usuario por DNI
-get '/users/:dni' do
+get "#{AppConfig::API_BASE_PATH}/users/:dni" do
   user = User.find_by(dni: params[:dni])
   
   if user
@@ -39,7 +40,7 @@ get '/users/:dni' do
 end
 
 # Actualizar un usuario por DNI
-put '/users/:dni' do
+put "#{AppConfig::API_BASE_PATH}/users/:dni" do
   user = User.find_by(dni: params[:dni])
   
   if user
@@ -61,7 +62,7 @@ put '/users/:dni' do
 end
 
 # Eliminar un usuario por DNI
-delete '/users/:dni' do
+delete "#{AppConfig::API_BASE_PATH}/users/:dni" do
   user = User.find_by(dni: params[:dni])
   
   if user
