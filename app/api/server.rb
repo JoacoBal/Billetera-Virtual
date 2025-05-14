@@ -25,6 +25,10 @@ class App < Sinatra::Application
     end
   end
 
+  options '*' do
+    200
+  end
+
   get '/' do
     "Welcome"
   end

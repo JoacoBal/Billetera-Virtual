@@ -1,10 +1,10 @@
 # Define los servicios que componen la aplicación.
 services:
   # Nombre del servicio: "app".
-  app:
+  api:
     # Configura la construcción del contenedor usando el Dockerfile en el directorio actual.
     build:
-      context: .
+      context: ./api
     # Sobrescribe el comando por defecto del Dockerfile para desarrollo:
     # - bundle exec rackup: Ejecuta el servidor Rack.
     # - -o 0.0.0.0: Escucha en todas las interfaces de red.
@@ -18,4 +18,9 @@ services:
       - '8000:8000'
     # Monta el directorio actual del host en /app del contenedor, permitiendo reflejar cambios en tiempo real.
     volumes:
-      - .:/app
+      - .:/app/api
+  web:
+    build:
+      context: ./web
+    ports:
+      - '3000:80'
