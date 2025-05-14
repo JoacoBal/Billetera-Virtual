@@ -10,10 +10,39 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_05_13_232444) do
-  create_table "users", force: :cascade do |t|
-    t.string "name"
+ActiveRecord::Schema[8.0].define(version: 2025_05_14_201557) do
+  create_table "users", primary_key: "dni", id: :string, force: :cascade do |t|
+    t.string "name", null: false
+    t.string "lastName", null: false
+    t.string "email", null: false
+    t.string "password", null: false
+    t.date "birthdate", null: false
+    t.string "phone", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["email"], name: "index_users_on_email", unique: true
+  end
+
+  create_table "wallet_members", primary_key: ["wallet_cvu", "user_dni"], force: :cascade do |t|
+    t.string "wallet_cvu", null: false
+    t.string "user_dni", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
+
+  create_table "wallets", primary_key: "cvu", id: :string, force: :cascade do |t|
+    t.string "dni_owner", null: false
+    t.string "alias"
+    t.decimal "balance", precision: 15, scale: 2, default: "0.0"
+    t.string "type", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["alias"], name: "index_wallets_on_alias", unique: true
+    t.index ["cvu"], name: "index_wallets_on_cvu", unique: true
+    t.check_constraint "type IN ('principal', 'secondary')", name: "wallet_type_check"
+  end
+
+  add_foreign_key "wallet_members", "users", column: "user_dni", primary_key: "dni"
+  add_foreign_key "wallet_members", "wallets", column: "wallet_cvu", primary_key: "cvu"
+  add_foreign_key "wallets", "users", column: "dni_owner", primary_key: "dni"
 end

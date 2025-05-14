@@ -6,6 +6,7 @@ require 'active_record'
 require 'sinatra/activerecord'
 
 require_relative 'models/user'
+require_relative 'models/wallet'
 
 class App < Sinatra::Application
   configure :development do
