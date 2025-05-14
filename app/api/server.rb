@@ -5,8 +5,12 @@ require 'logger'
 require 'active_record'
 require 'sinatra/activerecord'
 
+require 'json'
 require_relative 'models/user'
 require_relative 'models/wallet'
+require_relative 'models/wallet_member'
+
+require_relative 'controllers/users_controller'
 
 class App < Sinatra::Application
   configure :development do
