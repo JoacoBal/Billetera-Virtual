@@ -10,7 +10,18 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_05_14_201557) do
+ActiveRecord::Schema[8.0].define(version: 2025_05_15_025209) do
+  create_table "transactions", force: :cascade do |t|
+    t.string "origin_cvu", null: false
+    t.string "destination_cvu", null: false
+    t.decimal "amount", precision: 15, scale: 2, null: false
+    t.string "description"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["destination_cvu"], name: "index_transactions_on_destination_cvu"
+    t.index ["origin_cvu"], name: "index_transactions_on_origin_cvu"
+  end
+
   create_table "users", primary_key: "dni", id: :string, force: :cascade do |t|
     t.string "name", null: false
     t.string "lastName", null: false
@@ -42,6 +53,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_14_201557) do
     t.check_constraint "type IN ('principal', 'secondary')", name: "wallet_type_check"
   end
 
+  add_foreign_key "transactions", "wallets", column: "destination_cvu", primary_key: "cvu"
+  add_foreign_key "transactions", "wallets", column: "origin_cvu", primary_key: "cvu"
   add_foreign_key "wallet_members", "users", column: "user_dni", primary_key: "dni"
   add_foreign_key "wallet_members", "wallets", column: "wallet_cvu", primary_key: "cvu"
   add_foreign_key "wallets", "users", column: "dni_owner", primary_key: "dni"

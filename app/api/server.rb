@@ -9,8 +9,10 @@ require 'json'
 require_relative 'models/user'
 require_relative 'models/wallet'
 require_relative 'models/wallet_member'
+require_relative 'models/transaction'
 
-require_relative 'controllers/users_controller'
+Dir["./services/**/*.rb"].each { |file| require_relative file }
+Dir["./controllers/**/*.rb"].each { |file| require_relative file }
 
 class App < Sinatra::Application
   configure :development do

@@ -35,7 +35,7 @@ get "#{AppConfig::API_BASE_PATH}/users/:dni" do
   else
     status 404
     content_type :json
-    { error: 'User not found' }.to_json
+    { error: 'Usuario no encontrado' }.to_json
   end
 end
 
@@ -71,6 +71,6 @@ delete "#{AppConfig::API_BASE_PATH}/users/:dni" do
   else
     status 404
     content_type :json
-    { error: 'User not found' }.to_json
+    { error: 'Usuario no encontrado' }.to_json
   end
 end
