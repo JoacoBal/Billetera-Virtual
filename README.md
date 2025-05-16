@@ -21,7 +21,7 @@ Sigue estos pasos para levantar la aplicación en tu entorno local usando Docker
    docker compose build
    ```
    ```bash
-   docker compose up app
+   docker compose up
    ```
 3. **Crea la base de datos**
    ```bash
