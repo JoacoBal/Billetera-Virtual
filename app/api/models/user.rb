@@ -1,6 +1,6 @@
 class User < ActiveRecord::Base
     # Asociaciones
-    has_many :wallets, foreign_key: :dni_owner, primary_key: :dni
+    has_many :wallets, foreign_key: 'dni_owner', primary_key: 'dni'
 
     # Validaciones
     validates :dni, presence: true, uniqueness: true

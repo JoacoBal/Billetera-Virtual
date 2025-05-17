@@ -1,8 +1,10 @@
+require_relative '../lib/errors'
+
 class Wallet < ActiveRecord::Base
   self.primary_key = 'cvu'
   self.inheritance_column = :_type_disabled
 
-  belongs_to :owner, class_name: 'User', foreign_key: 'dni_owner'
+  belongs_to :owner, class_name: 'User', foreign_key: 'dni_owner', primary_key: 'dni'
 
   has_many :sent_transactions,
            class_name: 'Transaction',
@@ -22,7 +24,12 @@ class Wallet < ActiveRecord::Base
   validate :only_one_principal_wallet_per_user
 
   private
-
+  # Validates that a user can only have one wallet of type 'principal'.
+  #
+  # This method adds a validation error if another wallet with type 'principal'
+  # already exists for the same user (`dni_owner`).
+  #
+  # @return [void]
   def only_one_principal_wallet_per_user
     return unless type == 'principal'
 
@@ -30,7 +37,8 @@ class Wallet < ActiveRecord::Base
     existing = existing.where.not(cvu: cvu) if persisted?
 
     if existing.exists?
-      errors.add(:type, 'ya existe una wallet principal para este usuario')
+      error = Errors::WALLET[:principal_exists]
+      errors.add(:type, "#{error[:message]}")
     end
   end
 end

@@ -12,6 +12,18 @@ get "#{AppConfig::API_BASE_PATH}/wallets" do
   wallets.to_json
 end
 
+# Obtener cajas por dni (cajas donde el usuario es dueño)
+get "#{AppConfig::API_BASE_PATH}/wallets/:dni" do
+  wallets = Wallet.where(dni_owner: params[:dni])
+
+  content_type :json
+  if wallets.any?
+    wallets.to_json
+    status 404
+    { error: 'No se encontraron cajas para el DNI proporcionado' }.to_json
+  end
+end
+
 post "#{AppConfig::API_BASE_PATH}/wallets" do
   data = JSON.parse(request.body.read)
 
@@ -47,15 +59,8 @@ post "#{AppConfig::API_BASE_PATH}/wallets" do
   end
 end
 
-# Obtener cajas por dni (cajas donde el usuario es dueño)
-get "#{AppConfig::API_BASE_PATH}/wallets/:dni" do
-  wallets = Wallet.where(dni_owner: params[:dni])
+# DELETE - Eliminar una wallet por CVU, los fondos, en caso de tener, deben ser transferidos a
+# la caja principal del dueño.
+# Si la Wallet es tipo "Principal" entonces no puede ser borrada.
 
-  content_type :json
-  if wallets.any?
-    wallets.to_json
-  else
-    status 404
-    { error: 'No se encontraron cajas para el DNI proporcionado' }.to_json
-  end
-end
+# GET - Obtener una Wallet por CVU

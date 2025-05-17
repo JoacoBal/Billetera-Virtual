@@ -1,7 +1,6 @@
 require 'sinatra'
 require 'json'
 require_relative '../config/constants'
-require_relative '../services/transactions_service'
 
 # Crea una nueva transacción
 post "#{AppConfig::API_BASE_PATH}/transfer" do
@@ -10,9 +9,15 @@ post "#{AppConfig::API_BASE_PATH}/transfer" do
   origin_cvu = data["origin_cvu"]
   destination_cvu = data["destination_cvu"]
   amount = data["amount"].to_d
+  description = data["description"]
 
   begin
-    transfer_funds(origin_cvu: origin_cvu, destination_cvu: destination_cvu, amount: amount)
+    Transaction.create!(
+        origin_cvu: origin_cvu,
+        destination_cvu: destination_cvu,
+        amount: amount,
+        description: description
+    )
     status 200
     content_type :json
     { message: "Transferencia exitosa" }.to_json
