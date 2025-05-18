@@ -9,13 +9,12 @@ module WalletsService
     raise ActiveRecord::RecordNotFound, "Usuario con DNI #{dni_owner} no existe" if user.nil?
     raise ArgumentError, "Tipo inválido. Debe ser 'principal' o 'secondary'" unless %w[principal secondary].include?(type)
     
-    wallet = Wallet.new(
+    wallet = Wallet.create_wallet!(
       cvu: generate_cvu,
       dni_owner: dni_owner,
       alias: alias_name,
       type: type
     )
-    wallet.save!
     wallet
   end
 
