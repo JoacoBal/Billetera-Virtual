@@ -6,6 +6,8 @@ class Wallet < ActiveRecord::Base
 
   belongs_to :owner, class_name: 'User', foreign_key: 'dni_owner', primary_key: 'dni'
 
+  has_many :users, through: :wallet_members
+
   has_many :sent_transactions,
            class_name: 'Transaction',
            foreign_key: 'origin_cvu',
@@ -22,6 +24,15 @@ class Wallet < ActiveRecord::Base
   validates :type, presence: true, inclusion: { in: %w[principal secondary] }
 
   validate :only_one_principal_wallet_per_user
+
+  def self.create_wallet!(data)
+    ActiveRecord::Base.transaction do
+      wallet = create!(data)
+      user = User.find_by!(dni: wallet.dni_owner)
+      WalletMember.create!(user: user, wallet: wallet)
+      wallet
+    end
+  end
 
   private
   # Validates that a user can only have one wallet of type 'principal'.
