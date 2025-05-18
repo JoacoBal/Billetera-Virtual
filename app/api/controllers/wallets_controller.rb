@@ -7,6 +7,8 @@ require_relative '../services/wallets_service'
 
 # Obtener todas las cajas
 get "#{AppConfig::API_BASE_PATH}/wallets" do
+  protected!
+  
   wallets = Wallet.all
   content_type :json
   wallets.to_json

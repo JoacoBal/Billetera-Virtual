@@ -10,3 +10,7 @@ gem 'sqlite3'
 gem 'rake'
 gem 'json'
 gem 'rack-cors'
+
+gem 'dotenv'
+gem 'jwt'
+gem 'bcrypt' # para encriptar contraseñas
