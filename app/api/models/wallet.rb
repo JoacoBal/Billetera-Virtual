@@ -27,6 +27,7 @@ class Wallet < ActiveRecord::Base
 
   def self.create_wallet!(data)
     ActiveRecord::Base.transaction do
+      data.cvu = generate_cvu
       wallet = create!(data)
       user = User.find_by!(dni: wallet.dni_owner)
       WalletMember.create!(user: user, wallet: wallet)
@@ -51,5 +52,13 @@ class Wallet < ActiveRecord::Base
       error = Errors::WALLET[:principal_exists]
       errors.add(:type, "#{error[:message]}")
     end
+  end
+
+  def self.generate_cvu
+    require 'securerandom'
+    fixed_prefix = "00019876"
+    random_suffix = SecureRandom.random_number(10**14).to_s.rjust(14, '0')
+
+    "#{fixed_prefix}#{random_suffix}"
   end
 end

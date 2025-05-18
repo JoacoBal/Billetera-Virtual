@@ -4,25 +4,32 @@ require_relative '../models/wallet'
 require_relative '../models/user'
 require_relative '../config/constants'
 require_relative '../services/wallets_service'
+require_relative '../lib/errors'
 
-# Obtener todas las cajas
-get "#{AppConfig::API_BASE_PATH}/wallets" do
-  protected!
-  
-  wallets = Wallet.all
-  content_type :json
-  wallets.to_json
-end
-
-# Obtener cajas por dni (cajas donde el usuario es dueño)
+# API endpoint to retrieve all wallets available to a user identified by their DNI.
+# It first attempts to find the user with the given DNI. If the user is not found,
+# it returns a 404 status with a corresponding error message.
+# If the user exists, it fetches all wallets they have access to (e.g., owned or shared).
+#
+# @route GET /wallets/:dni
+# @param [String] :dni - The DNI of the user
+# @response [200] JSON array of wallets or empty array if none
+# @response [404] JSON error message if the user is not found
 get "#{AppConfig::API_BASE_PATH}/wallets/:dni" do
-  wallets = Wallet.where(dni_owner: params[:dni])
+  protected!
 
+  user = User.find_by(dni: params[:dni])
+  if user.nil?
+    status 404
+    content_type :json
+    return { error: Errors::USER[:not_found][:message] }.to_json
+  end
+  wallets = user.available_wallets
   content_type :json
   if wallets.any?
     wallets.to_json
-    status 404
-    { error: 'No se encontraron cajas para el DNI proporcionado' }.to_json
+  else
+    [].to_json
   end
 end
 

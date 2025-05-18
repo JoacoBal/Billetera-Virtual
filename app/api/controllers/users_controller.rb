@@ -39,6 +39,24 @@ get "#{AppConfig::API_BASE_PATH}/users/:dni" do
   end
 end
 
+get "#{AppConfig::API_BASE_PATH}/current" do
+  protected!
+  user = current_user
+  
+  if user
+    content_type :json
+    {
+      dni: user.dni,
+      name: user.name,
+      email: user.email
+    }.to_json
+  else
+    status 404
+    content_type :json
+    { error: 'Sesión inválida' }.to_json
+  end
+end
+
 # Actualizar un usuario por DNI
 put "#{AppConfig::API_BASE_PATH}/users/:dni" do
   user = User.find_by(dni: params[:dni])

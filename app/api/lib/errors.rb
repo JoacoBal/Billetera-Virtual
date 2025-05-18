@@ -1,4 +1,10 @@
 module Errors
+  USER = {
+    not_found: {
+      code: 'USER_001',
+      message: 'User not found'
+    }
+  }
   WALLET = {
     principal_exists: {
       code: 'WALLET_001',
