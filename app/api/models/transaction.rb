@@ -1,3 +1,5 @@
+require_relative '../lib/errors'
+
 class Transaction < ActiveRecord::Base
   belongs_to :origin_wallet, class_name: 'Wallet', foreign_key: 'origin_cvu', primary_key: 'cvu'
   belongs_to :destination_wallet, class_name: 'Wallet', foreign_key: 'destination_cvu', primary_key: 'cvu'
@@ -6,7 +8,25 @@ class Transaction < ActiveRecord::Base
   validates :destination_cvu, presence: true
   validates :amount, presence: true, numericality: { greater_than: 0 }
 
+  validate :validate_wallets
+
+  after_create :transfer_balance
+
   private
+
+  def validate_wallets
+    if Wallet.find_by(cvu: origin_cvu).nil?
+      errors.add(:origin_cvu, Errors::TRANSACTION[:invalid_source][:message])
+    end
+
+    if Wallet.find_by(cvu: destination_cvu).nil?
+      errors.add(:destination_cvu, Errors::TRANSACTION[:invalid_destination][:message])
+    end
+
+    if origin_cvu == destination_cvu
+      errors.add(:destination_cvu, Errors::TRANSACTION[:same_wallet][:message])
+    end
+  end
 
   # Performs a fund transfer between wallets in a single atomic database transaction.
   #
@@ -20,9 +40,7 @@ class Transaction < ActiveRecord::Base
   # @return [void]
   def transfer_balance
     ActiveRecord::Base.transaction do
-      raise 'Origin wallet not found' unless origin_wallet
-      raise 'Destination wallet not found' unless destination_wallet
-      raise 'Insufficient funds' if origin_wallet.balance < amount
+      raise Errors::TRANSACTION[:insufficient_funds][:message] if origin_wallet.balance < amount
       
       origin_wallet.balance -= amount
       origin_wallet.save!
