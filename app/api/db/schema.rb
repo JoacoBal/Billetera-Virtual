@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_05_15_025209) do
+ActiveRecord::Schema[8.0].define(version: 2025_05_18_075025) do
   create_table "transactions", force: :cascade do |t|
     t.string "origin_cvu", null: false
     t.string "destination_cvu", null: false
@@ -48,6 +48,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_15_025209) do
     t.string "type", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "deleted", default: false, null: false
+    t.datetime "deleted_at"
     t.index ["alias"], name: "index_wallets_on_alias", unique: true
     t.index ["cvu"], name: "index_wallets_on_cvu", unique: true
     t.check_constraint "type IN ('principal', 'secondary')", name: "wallet_type_check"
