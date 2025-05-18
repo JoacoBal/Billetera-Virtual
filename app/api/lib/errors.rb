@@ -5,8 +5,22 @@ module Errors
       message: 'A principal wallet already exists for this user'
     }
   }
-  def self.get(section, key)
-    code, message = ERRORS.dig(section, key)
-    { code: code, message: message }
-  end
+  TRANSACTION = {
+    invalid_source: {
+      code: 'TRANSACTION_001',
+      message: 'Source does not reference a valid wallet'
+    },
+    invalid_destination: {
+      code: 'TRANSACTION_002',
+      message: 'Destination does not reference a valid wallet'
+    },
+    same_wallet: {
+      code: 'TRANSACTION_003',
+      message: 'must be different from origin'
+    },
+    insufficient_funds: {
+      code: 'TRANSACTION_003',
+      message: 'Insufficient funds'
+    }
+  }
 end
