@@ -1,4 +1,3 @@
-import { Button } from "@/components/ui/button";
 import { useSession } from "@/contexts/session-context";
 import { useNavigate } from "react-router";
 
@@ -12,12 +11,7 @@ export const HomePage = () => {
                 Algo salió mal
             </div>
         );
-    const signOut = () => {
-        onSignOut();
-        navigate(0);
-    }
-    return <>
+    return <div>
     usuario op
-    <Button onClick={signOut}>Cerrar sesión</Button>
-    </>;
+    </div>;
 };

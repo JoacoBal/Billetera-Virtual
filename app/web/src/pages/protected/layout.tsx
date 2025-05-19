@@ -1,10 +1,12 @@
 
+import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import { useSession } from '@/contexts/session-context';
 import { useEffect } from 'react';
 import { Outlet, useNavigate } from 'react-router';
+import { SidebarComponent } from './components/Sidebar';
 
 export const ProtectedLayout = () => {
-    const { user, isAuthenticated } = useSession();
+    const { isAuthenticated } = useSession();
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -14,8 +16,12 @@ export const ProtectedLayout = () => {
     }, [isAuthenticated]);
 
     return (
-        <div>
-            <Outlet />
-        </div>
+        <SidebarProvider>
+            <SidebarComponent />
+            <SidebarTrigger />
+            <main>
+                <Outlet/>
+            </main>
+        </SidebarProvider>
     );
 };
