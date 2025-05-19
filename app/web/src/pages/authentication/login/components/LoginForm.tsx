@@ -25,7 +25,7 @@ export const LoginForm = () => {
                 toast(result.errors.general);
             }
         } else {
-            signIn(result.data.token); // Guarda el token en localStorage
+            signIn(result.token); // Guarda el token en localStorage
         }
     }
     return (
