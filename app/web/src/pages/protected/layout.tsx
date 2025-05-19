@@ -8,7 +8,6 @@ export const ProtectedLayout = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        console.log(user)
         if (!isAuthenticated) {
             navigate('/auth/login');
         }

@@ -52,9 +52,9 @@ type CredentialsFormValues = z.infer<typeof credentialsSchema>;
 type DetailsFormValues = z.infer<typeof detailsSchema>;
 
 const { useStepper, steps, utils } = defineStepper(
-    { id: 'credentials', label: 'Credentials', schema: credentialsSchema },
-    { id: 'details', label: 'Details', schema: detailsSchema },
-    { id: 'complete', label: 'Complete', schema: z.object({}) }
+    { id: 'credentials', label: 'Credenciales', schema: credentialsSchema },
+    { id: 'details', label: 'Información', schema: detailsSchema },
+    { id: 'complete', label: 'Completar', schema: z.object({}) }
 );
 
 export const RegisterForm = () => {
@@ -79,6 +79,17 @@ export const RegisterForm = () => {
                     message: message as string,
                     });
                 });
+                
+                const firstErrorField = Object.keys(result.errors)[0];
+                const stepWithError = stepper.all.find((step) => {
+                    if(step.schema instanceof z.ZodObject) {
+                        return Object.keys(step.schema.shape).includes(firstErrorField)
+                    }
+                    return false;
+                });
+                if (stepWithError) {
+                    stepper.goTo(stepWithError.id);
+                }
                 if(result.errors.general) {
                     toast(result.errors.general);
                 }
@@ -100,10 +111,10 @@ export const RegisterForm = () => {
                 className="space-y-6 p-6 border rounded-lg w-[450px]"
             >
                 <div className="flex justify-between">
-                    <h2 className="text-lg font-medium">Checkout</h2>
+                    <h2 className="text-lg font-medium">Crea tu cuenta</h2>
                     <div className="flex items-center gap-2">
                         <span className="text-sm text-muted-foreground">
-                            Step {currentIndex + 1} of {steps.length}
+                            Paso {currentIndex + 1} de {steps.length}
                         </span>
                     </div>
                 </div>
@@ -160,7 +171,7 @@ export const RegisterForm = () => {
                                 onClick={stepper.prev}
                                 disabled={stepper.isFirst}
                             >
-                                Back
+                                Volver
                             </Button>
                             <Button type="submit">
                                 {stepper.isLast ? 'Complete' : 'Next'}
@@ -349,6 +360,6 @@ function DetailsComponent() {
 }
 
 function CompleteComponent() {
-    return <div className="text-center">Now we are ready!</div>;
+    return <p className="text-center">¡Estamos listos! Asegurate de que la información ingresada sea la correcta antes de continuar.</p>;
 }
 

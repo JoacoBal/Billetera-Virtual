@@ -10,9 +10,9 @@ class User < ActiveRecord::Base
     has_many :available_wallets, through: :wallet_members, source: :wallet
 
     # Validaciones
-    validates :dni, presence: true, uniqueness: true
+    validates :dni, presence: true, uniqueness: { message: 'Ya hay un Usuario con ese DNI registrado.' }
     validates :name, :lastName, :email, :password, :birthdate, :phone, presence: true
-    validates :email, uniqueness: true
+    validates :email, uniqueness: { message: 'Ya hay un Usuario con ese Email registrado.' }
     validates :email, format: { with: URI::MailTo::EMAIL_REGEXP }
 
     after_create :create_default_wallet

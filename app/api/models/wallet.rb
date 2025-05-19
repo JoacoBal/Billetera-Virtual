@@ -27,7 +27,7 @@ class Wallet < ActiveRecord::Base
 
   def self.create_wallet!(data)
     ActiveRecord::Base.transaction do
-      data.cvu = generate_cvu
+      data[:cvu] = generate_cvu
       wallet = create!(data)
       user = User.find_by!(dni: wallet.dni_owner)
       WalletMember.create!(user: user, wallet: wallet)

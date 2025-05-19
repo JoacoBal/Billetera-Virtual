@@ -1,4 +1,3 @@
-
 import { onSignIn } from "@/api/authApi";
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel } from "@/components/ui/form";
@@ -6,18 +5,27 @@ import { Input } from "@/components/ui/input";
 import { useSession } from "@/contexts/session-context";
 import type { LoginData } from "@/types";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 
 export const LoginForm = () => {
     const form = useForm<LoginData>()
+    const { setError } = form;
     const { onSignIn: signIn } = useSession();
+
     const onSubmit = async (data: LoginData) => {
-        try {
-            const res = await onSignIn(data);
-            console.log(res)
-            if(res.data)
-                signIn(res.data.token); // Guarda el token en localStorage
-        } catch (err) {
-            console.error('Login failed', err);
+        const result = await onSignIn(data);
+        if(result.errors) {
+            Object.entries(result.errors).forEach(([field, message]) => {
+                setError(field as any, {
+                type: "server",
+                message: message as string,
+                });
+            });
+            if(result.errors.general) {
+                toast(result.errors.general);
+            }
+        } else {
+            signIn(result.data.token); // Guarda el token en localStorage
         }
     }
     return (

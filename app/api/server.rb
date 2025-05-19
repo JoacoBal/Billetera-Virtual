@@ -72,7 +72,15 @@ class App < Sinatra::Application
   post "#{AppConfig::API_BASE_PATH}/register" do
     content_type :json
     data = JSON.parse(request.body.read)
-    user = User.new(email: data['email'])
+    logger.info(data)
+    user = User.new({
+      dni: data['dni'],
+      email: data['email'],
+      name: data['name'],
+      lastName: data['lastName'],
+      birthdate: data['birthdate'],
+      phone: data['phone']
+    })
     user.password = data['password']
 
     if user.save
@@ -80,7 +88,9 @@ class App < Sinatra::Application
       { message: 'User created successfully' }.to_json
     else
       status 422
-      { error: user.errors.full_messages }.to_json
+      {
+        errors: user.errors.messages.transform_values(&:first)
+      }.to_json
     end
   end
 end
