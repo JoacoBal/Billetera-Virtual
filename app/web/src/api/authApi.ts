@@ -7,8 +7,12 @@ export const onSignIn = async (data: LoginData) => {
 }
 
 export const onSignUp = async (data: RegisterData & User) => {
-    if(data.password != data.confirm_password) return { errors: { "password": "Password mismatch" } }
+    if(data.password != data.confirm_password) return { errors: { "password": "Las contraseñas no coinciden" } }
     
-    const result = await httpClient.post("/register", data);
-    return result.data;
+    try {
+        const result = await httpClient.post("/register", data);
+        return result.data;
+    } catch(error) {
+        return { errors: { general: "Algo salió mal..." } }
+    }
 }

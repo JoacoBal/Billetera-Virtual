@@ -5,6 +5,7 @@ import App from './App.tsx'
 import { BrowserRouter } from 'react-router'
 import { SessionProvider } from './contexts/session-context.tsx'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { Toaster } from 'sonner'
 
 const queryClient = new QueryClient();
 
@@ -14,6 +15,7 @@ createRoot(document.getElementById('root')!).render(
       <SessionProvider>
         <BrowserRouter>
             <App />
+            <Toaster />
         </BrowserRouter>
       </SessionProvider>
     </QueryClientProvider>

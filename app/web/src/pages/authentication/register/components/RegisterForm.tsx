@@ -11,6 +11,7 @@ import { z } from 'zod';
 import { onSignUp } from "@/api/authApi";
 import type { RegisterData, User } from "@/types";
 import { useNavigate } from "react-router";
+import { toast } from "sonner";
 
 const passwordSchema = z
   .string()
@@ -64,16 +65,25 @@ export const RegisterForm = () => {
         mode: 'onTouched',
         resolver: zodResolver(stepper.current.schema),
     });
+    const { setError } = form;
 
     const onSubmit = async (values: z.infer<typeof stepper.current.schema>) => {
-        console.log(`Form values for step ${stepper.current.id}:`, values);
         if (stepper.isLast) {
             const data = form.getValues() as RegisterData & User;
             const result = await onSignUp(data);
             if(result.errors) {
                 stepper.reset();
-                console.log(result.errors)
+                Object.entries(result.errors).forEach(([field, message]) => {
+                    setError(field as any, {
+                    type: "server",
+                    message: message as string,
+                    });
+                });
+                if(result.errors.general) {
+                    toast(result.errors.general);
+                }
             } else {
+                toast("La cuenta fue creada con éxito!")
                 navigate("/auth/login");
             }
         } else {
@@ -185,7 +195,9 @@ function CredentialsComponent() {
                     placeholder="johndoe@example.com"
                     id={register('email').name}
                     {...register('email')}
-                    className="block w-full p-2 border rounded-md"
+                    className={`block w-full p-2 border rounded-md ${
+                        errors.email ? 'border-red-500' : 'border-gray-300'
+                    }`}
                 />
                 {errors.email && (
                     <span className="text-sm text-destructive">
