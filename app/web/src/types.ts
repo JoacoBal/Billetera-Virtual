@@ -5,3 +5,14 @@ export interface User {
     email: string;
     phone: string;
 }
+
+export interface LoginData {
+    email: string;
+    password: string;
+}
+
+export interface RegisterData {
+    email: string;
+    password: string;
+    confirm_password: string;
+}
