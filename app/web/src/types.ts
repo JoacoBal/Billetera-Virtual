@@ -16,3 +16,18 @@ export interface RegisterData {
     password: string;
     confirm_password: string;
 }
+
+export interface Wallet {
+    cvu: string,
+    dni_owner: string,
+    alias: string,
+    balance: number,
+    type: string
+}
+
+export interface Transaction {
+    origin_cvu: string;
+    destination_cvu: string;
+    amount: number;
+    description?: string;
+}

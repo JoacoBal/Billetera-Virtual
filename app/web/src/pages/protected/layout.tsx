@@ -19,7 +19,7 @@ export const ProtectedLayout = () => {
         <SidebarProvider>
             <SidebarComponent />
             <SidebarTrigger />
-            <main>
+            <main className='w-full p-8'>
                 <Outlet/>
             </main>
         </SidebarProvider>

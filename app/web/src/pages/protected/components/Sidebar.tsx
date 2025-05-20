@@ -27,7 +27,7 @@ const items = [
     },
     {
         title: "Transferir",
-        url: "#",
+        url: "/transfer",
         icon: Calendar,
     },
     {
@@ -43,7 +43,7 @@ const items = [
 ]
 
 export const SidebarComponent = () => {
-
+    const navigate = useNavigate();
     return (
         <Sidebar>
             <SidebarContent>
@@ -53,8 +53,10 @@ export const SidebarComponent = () => {
                         <SidebarMenu>
                             {items.map((item) => (
                                 <SidebarMenuItem key={item.title}>
-                                    <SidebarMenuButton asChild>
-                                        <a href={item.url}>
+                                    <SidebarMenuButton asChild onClick={() => {
+                                        navigate(item.url)
+                                    }}>
+                                        <a>
                                             <item.icon />
                                             <span>{item.title}</span>
                                         </a>

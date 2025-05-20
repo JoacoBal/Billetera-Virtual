@@ -6,6 +6,7 @@ import { AuthLayout } from './pages/authentication/layout'
 import { ProtectedLayout } from './pages/protected/layout'
 import { HomePage } from './pages/protected/page'
 import { RegisterPage } from './pages/authentication/register/page'
+import { TransactionPage } from './pages/protected/transactions/page'
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
       </Route>
       <Route element={<ProtectedLayout />}>
         <Route path="/" element={<HomePage />} />
+        <Route path="/transfer" element={<TransactionPage />} />
       </Route>
     </Routes>
   )

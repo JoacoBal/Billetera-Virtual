@@ -27,9 +27,20 @@ get "#{AppConfig::API_BASE_PATH}/wallets/:dni" do
   wallets = user.available_wallets
   content_type :json
   if wallets.any?
-    wallets.to_json
+    if(params[:fields])
+      selected_fields = params[:fields].split(',').map(&:strip)
+      
+      projected_wallets = wallets.map do |wallet|
+        data = wallet.respond_to?(:attributes) ? wallet.attributes : wallet.as_json
+        data.slice(*selected_fields)
+      end
+
+      projected_wallets.to_json
+    else
+      wallets.to_json
+    end
   else
-    [].to_json
+   [].to_json 
   end
 end
 
