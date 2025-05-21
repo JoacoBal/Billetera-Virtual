@@ -5,6 +5,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Textarea } from "@/components/ui/textarea"
 import { useSession } from "@/contexts/session-context"
 import type { Wallet } from "@/types"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -137,6 +138,24 @@ export const TransactionForm = () => {
                                 />
                             </FormControl>
                             <FormDescription>Monto a enviar.</FormDescription>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
+                <FormField
+                    control={control}
+                    name="description"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>Nota</FormLabel>
+                            <FormControl>
+                                <Textarea
+                                    placeholder="Adjunta una nota"
+                                    {...field}
+                                    {...register("description")}
+                                />
+                            </FormControl>
+                            <FormDescription>Adjunta una nota (opcional).</FormDescription>
                             <FormMessage />
                         </FormItem>
                     )}
