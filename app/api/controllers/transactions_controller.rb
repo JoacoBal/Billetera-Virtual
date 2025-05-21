@@ -33,3 +33,56 @@ post "#{AppConfig::API_BASE_PATH}/transfer" do
     { errors: { general: [e.message] } }.to_json
   end
 end
+
+# Devuelve todas las transacciones de la sesión actual
+get "#{AppConfig::API_BASE_PATH}/transactions" do
+  protected!
+  user = current_user
+  wallets = user.available_wallets
+  wallet_cvus = wallets.pluck(:cvu)
+
+  # Parámetros de paginación
+  page = (params[:page] || 1).to_i
+  per_page = (params[:per_page] || 10).to_i
+  offset = (page - 1) * per_page
+
+  transactions = Transaction
+    .includes(origin_wallet: :owner, destination_wallet: :owner)
+    .where(origin_cvu: wallet_cvus)
+    .or(Transaction.where(destination_cvu: wallet_cvus))
+    .order(created_at: :desc)
+    .limit(per_page)
+    .offset(offset)
+
+  total_count = Transaction
+    .where(origin_cvu: wallet_cvus)
+    .or(Transaction.where(destination_cvu: wallet_cvus))
+    .count
+
+  content_type :json
+  {
+    page: page,
+    per_page: per_page,
+    total: total_count,
+    total_pages: (total_count.to_f / per_page).ceil,
+    transactions: transactions.map do |tx|
+      type = wallet_cvus.include?(tx.origin_cvu) ? "sent" : "received"
+      contact_user = type == "sent" ? tx.destination_wallet&.owner : tx.origin_wallet&.owner
+
+      {
+        origin_cvu: tx.origin_cvu,
+        destination_cvu: tx.destination_cvu,
+        amount: tx.amount,
+        description: tx.description,
+        created_at: tx.created_at,
+        type: type,
+        contact: contact_user && {
+          name: contact_user.name,
+          last_name: contact_user.lastName,
+          email: contact_user.email,
+          dni: contact_user.dni
+        }
+      }
+    end
+  }.to_json
+end
