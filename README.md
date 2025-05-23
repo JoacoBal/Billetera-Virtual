@@ -4,18 +4,26 @@
 
 Este proyecto pertenece a la materia Análisis y Diseño de Sistemas (2025) de la <a href="https://www.unrc.edu.ar">Universidad Nacional de Río Cuarto</a>.
 
+<h2> Current state </h2>
+A través de este enlace se podrá acceder a las funcionalidades con las que cuenta el sistema, viene dado por un breve resumen.
+
+<a href="docs/resume_1.md"> Estado del sistema </a>
 <h2>🚀 Cómo iniciar el proyecto localmente</h2>
 
 🛠️ Requisitos previos
 Asegúrate de tener instalado en tu máquina:
 * <a href="https://www.docker.com/get-started/">Docker</a>
+* <a href="https://nodejs.org/en"> Nodejs </a>
 
-Sigue estos pasos para levantar la aplicación en tu entorno local usando Docker:
+Sigue estos pasos para levantar la aplicación en tu entorno local:
 
 1. **Clona el repositorio**
    ```bash
    git clone https://github.com/JoacoBal/Billetera-Virtual.git
    cd billetera-virtual
+
+API:
+
 2. **Construye y levanta los servicios**
    ```bash
    docker compose build
@@ -35,7 +43,12 @@ Para acceder a la consola interactiva de Ruby y probar lógica:
 docker compose exec app bundle exec irb -I. -r server.rb
 ```
 
+Servidor WEB:
 
+2. **Iniciar entorno de desarrollo**
+   ```bash
+   npm run dev
+El Frontend no está dockerizado.
 <h2>📖 Documentation </h2>
 
  El repositorio cuenta con información de cada una de las etapas:
@@ -55,13 +68,14 @@ Algunas de las funcionalidades del proyecto:
 <h2>🗺️ Roadmap </h2>
  
  Para ver el roadmap y en qué feature se está trabajando:
-
+<a href="https://github.com/JoacoBal/Billetera-Virtual/projects?query=is%3Aopen"> Projects </a>
   
 <h2>💻 Built with</h2>
 
 Lenguajes utilizados:
 
 *   Ruby - Backend
+*   JavaScript / TypeScript – Frontend
 
 Tecnologías utilizadas:
 
@@ -69,3 +83,13 @@ Tecnologías utilizadas:
 *   SQLite3 – Base de datos
 *   ActiveRecord – ORM para gestionar interacciones con la base de datos
 *   Docker – Contenerización de la aplicación
+
+**Frontend:**
+
+* React – Librería para construir interfaces de usuario
+* TypeScript – Superset de JavaScript tipado
+* Vite – Herramienta de desarrollo y build rápida
+* Tailwind CSS – Framework de estilos utilitario
+* ShadCN UI – Componentes accesibles y elegantes basados en Radix UI
+* Axios – Cliente HTTP para llamadas a la API
+* TanStack Table (React Table) – Manejo avanzado de tablas (paginación, filtros, sorting)
