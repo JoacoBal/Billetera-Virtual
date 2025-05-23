@@ -25,9 +25,21 @@ export interface Wallet {
     type: string
 }
 
+export interface Contact {
+    name: string
+    last_name: string
+    email: string
+    dni: string
+}
+
 export interface Transaction {
     origin_cvu: string;
     destination_cvu: string;
     amount: number;
     description?: string;
+}
+
+export interface TransactionEntry extends Transaction {
+    type: "sent" | "received",
+    contact: Contact
 }

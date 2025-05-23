@@ -7,6 +7,7 @@ import { ProtectedLayout } from './pages/protected/layout'
 import { HomePage } from './pages/protected/page'
 import { RegisterPage } from './pages/authentication/register/page'
 import { TransactionPage } from './pages/protected/transactions/page'
+import { TransactionHistoryPage } from './pages/protected/transaction-history/page'
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
       <Route element={<ProtectedLayout />}>
         <Route path="/" element={<HomePage />} />
         <Route path="/transfer" element={<TransactionPage />} />
+        <Route path="/transactions" element={<TransactionHistoryPage />} />
       </Route>
     </Routes>
   )

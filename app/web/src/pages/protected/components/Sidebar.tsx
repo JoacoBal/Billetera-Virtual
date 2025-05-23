@@ -17,7 +17,7 @@ import { useNavigate } from "react-router"
 const items = [
     {
         title: "Inicio",
-        url: "#",
+        url: "/",
         icon: Home,
     },
     {
@@ -32,7 +32,7 @@ const items = [
     },
     {
         title: "Movimientos",
-        url: "#",
+        url: "/transactions",
         icon: Search,
     },
     {

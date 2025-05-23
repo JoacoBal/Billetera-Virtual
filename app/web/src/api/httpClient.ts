@@ -19,7 +19,7 @@ httpClient.interceptors.response.use(
   (error) => {
     if (error.response?.status === 401) {
       localStorage.removeItem('jwt');
-      window.location.href = '/login'; // Redirigir a login si está expirado o inválido
+      window.location.href = '/auth/login'; // Redirigir a login si está expirado o inválido
     }
     return Promise.reject(error);
   }
