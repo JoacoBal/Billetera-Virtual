@@ -79,8 +79,22 @@ post "#{AppConfig::API_BASE_PATH}/wallets" do
   end
 end
 
-# DELETE - Eliminar una wallet por CVU, los fondos, en caso de tener, deben ser transferidos a
-# la caja principal del dueño.
-# Si la Wallet es tipo "Principal" entonces no puede ser borrada.
+delete "#{AppConfig::API_BASE_PATH}/wallets/:cvu" do
+  protected!
+  cvu = params[:cvu]
+  begin
+    WalletsService.delete_wallet(cvu)
+    status 204
+  rescue ArgumentError => e
+    status 400
+    { error: e.message }.to_json
+  rescue ActiveRecord::RecordNotFound => e
+    status 404
+    { error: e.message }.to_json
+  rescue => e
+    status 500
+    { error: "Error inesperado: #{e.message}" }.to_json
+  end
+end
 
 # GET - Obtener una Wallet por CVU
