@@ -4,12 +4,22 @@ require_relative '../config/constants'
 
 # Crea una nueva transacción
 post "#{AppConfig::API_BASE_PATH}/transfer" do
+  protected!
+  user = current_user
+  wallets = user.available_wallets
   data = JSON.parse(request.body.read)
 
   origin_cvu = data["origin_cvu"]
   destination_cvu = data["destination_cvu"]
   amount = data["amount"].to_d
   description = data["description"]
+
+   # Verificamos que el origin_cvu pertenezca al usuario
+  unless wallets.any? { |wallet| wallet.cvu == origin_cvu }
+    status 403
+    content_type :json
+    return { errors: { permission: "No tenés permiso para usar ese CVU de origen" } }.to_json
+  end
 
   begin
     Transaction.create!(
