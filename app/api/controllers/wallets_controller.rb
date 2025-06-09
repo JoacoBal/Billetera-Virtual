@@ -98,3 +98,29 @@ delete "#{AppConfig::API_BASE_PATH}/wallets/:cvu" do
 end
 
 # GET - Obtener una Wallet por CVU
+get "#{AppConfig::API_BASE_PATH}/wallets/cvu/:cvu" do
+  protected!
+
+  wallet = Wallet.includes(:owner).find_by(cvu: params[:cvu])
+
+  if wallet
+    content_type :json
+    {
+      cvu: wallet.cvu,
+      alias: wallet.alias,
+      type: wallet.type,
+      balance: wallet.balance,
+      owner:{
+        dni: wallet.owner.dni,
+        name: wallet.owner.name,
+        last_name: wallet.owner.lastName,
+        email: wallet.owner.email,
+        phone: wallet.owner.phone
+      }
+    }.to_json
+  else
+    status 404
+    content_type :json
+    {error: "No se encontro la billetera con CVU #{params[:cvu]}"}.to_json
+  end
+end
