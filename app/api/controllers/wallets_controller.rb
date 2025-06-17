@@ -124,3 +124,37 @@ get "#{AppConfig::API_BASE_PATH}/wallets/cvu/:cvu" do
     {error: "No se encontro la billetera con CVU #{params[:cvu]}"}.to_json
   end
 end
+
+#Cambiar/Actualizar alias de la billetera
+patch "#{AppConfig::API_BASE_PATH}/wallets/:cvu/alias" do
+  content_type :json
+
+  wallet = Wallet.find_by(cvu: params[:cvu])
+  halt 404, { error: 'Wallet no encontrada'}.to_json unless wallet
+
+  data = JSON.parse(request.body.read)
+  nuevo_alias = data['alias']
+  halt 400, { error: 'No se coloco ningun alias...'}.to_json unless nuevo_alias
+
+  wallet.alias = nuevo_alias
+  if wallet.save
+    { message: 'Alias actualizado correctamente', alias: wallet.alias}.to_json
+  else
+      halt 500, { error: 'Ese alias no se puede utilizar'}.to_json
+  end
+end
+
+#Obtener billetera a partir del alias
+get "#{AppConfig::API_BASE_PATH}/wallets/alias/:alias" do
+content_type :json
+
+  wallet = Wallet.find_by(alias: params[:alias])
+  halt 404, { error: 'Alias no encontrado...'}.to_json unless wallet
+
+  {
+    cvu: wallet.cvu,
+    alias: wallet.alias,
+    balance: wallet.balance,
+    owner: wallet.owner.name
+  }.to_json
+end
