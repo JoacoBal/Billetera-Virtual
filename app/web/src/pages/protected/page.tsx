@@ -6,8 +6,7 @@ import type { Wallet } from "@/types";
 import { Badge, Bitcoin, Loader2, PiggyBank, Plus, WalletIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
-
-
+import { WalletDialog } from "./components/WalletCreationForm";
 
 
 // Función para elegir ícono según tipo de wallet
@@ -45,12 +44,10 @@ const WalletsDisplay = () => {
     }, [])
     return (
         <main className="p-6">
+
             <div className="flex items-center justify-between mb-6">
                 <h1 className="text-2xl font-bold">My Wallets</h1>
-                <Button variant="default" size="sm">
-                    <Plus className="h-4 w-4" />
-                    Nueva caja
-                </Button>
+                <WalletDialog />
             </div>
 
             {loading ? (

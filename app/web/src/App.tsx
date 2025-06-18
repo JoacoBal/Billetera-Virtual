@@ -21,7 +21,8 @@ function App() {
         <Route path="/" element={<HomePage />} />
         <Route path="/transfer" element={<TransactionPage />} />
         <Route path="/transactions" element={<TransactionHistoryPage />} />
-        <Route path="/withdraw" element={<WithdrawPage />} />
+        <Route path="/withdraw" element={<WithdrawPage type='withdraw' />} />
+        <Route path="/deposit" element={<WithdrawPage type='deposit' />} />
       </Route>
     </Routes>
   )

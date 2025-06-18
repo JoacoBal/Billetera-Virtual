@@ -1,4 +1,4 @@
-import { performWithdraw } from "@/api/transactionApi";
+import { performDeposit, performWithdraw } from "@/api/transactionApi";
 import { getAvailableWallets } from "@/api/walletsApi";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
@@ -20,21 +20,21 @@ const withdrawSchema = z.object({
 
 type WithdrawFormValues = z.infer<typeof withdrawSchema>;
 
-export const WithdrawPage = () => {
+export const WithdrawPage = ({ type } : { type: 'withdraw' | 'deposit' }) => {
     const form = useForm({
         mode: 'onTouched',
         resolver: zodResolver(withdrawSchema),
     });
     const { setError, watch } = form;
     const [loading, setLoading] = useState(false)
-
+    const shouldWithdraw = type == 'withdraw';
     const onSubmit = async (values: z.infer<typeof withdrawSchema>) => {
         setLoading(true)
-        const result = await performWithdraw(values)
+        const result = shouldWithdraw ? await performWithdraw(values) : await performDeposit(values);
         setLoading(false)
         if (result.errors) {
             if(result.errors.general) {
-                toast.error('Hubo un error al procesar el retiro.');
+                toast.error(`Hubo un error al procesar el ${ shouldWithdraw ? 'retiro' : 'depósito' }.`);
                 return;
             }
             Object.entries(result.errors).forEach(([field, message]) => {
@@ -44,21 +44,21 @@ export const WithdrawPage = () => {
                 });
             });
         } else {
-            toast.success(`Se retiraron ${watch("amount")} ARS`)
+            toast.success(`Se ${ shouldWithdraw ? 'retiró' : 'depositó' } ${watch("amount")} ARS`)
         }
     }
     return (
         <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
                 <div className="flex gap-8">
-                    <WithdrawForm loading={loading}/>
+                    <WithdrawForm loading={loading} shouldWithdraw={shouldWithdraw}/>
                 </div>
             </form>
         </Form>
     )
 }
 
-const WithdrawForm = ({ loading } : { loading: boolean }) => {
+const WithdrawForm = ({ loading, shouldWithdraw } : { loading: boolean, shouldWithdraw: boolean }) => {
     const { user } = useSession();
     const {
         control,
@@ -81,8 +81,8 @@ const WithdrawForm = ({ loading } : { loading: boolean }) => {
     return (
         <Card className="w-1/2 text-left">
             <CardHeader>
-                <CardTitle>Retirar</CardTitle>
-                <CardDescription>Ingresa los datos para retirar fondos</CardDescription>
+                <CardTitle>{ shouldWithdraw ? "Retirar" : "Depositar" }</CardTitle>
+                <CardDescription>Ingresa los datos para { shouldWithdraw ? 'retirar' : 'depositar' } fondos</CardDescription>
             </CardHeader>
             <CardContent className="space-y-8">
 
@@ -106,7 +106,7 @@ const WithdrawForm = ({ loading } : { loading: boolean }) => {
                                     </SelectContent>
                                 </Select>
                             </FormControl>
-                            <FormDescription>De esta caja se extraerán los fondos.</FormDescription>
+                            <FormDescription>{ shouldWithdraw ? 'De esta caja se extraerán los fondos' : 'En esta caja se depositarán los fondos' }.</FormDescription>
                             <FormMessage />
                         </FormItem>
                     )}
@@ -127,7 +127,7 @@ const WithdrawForm = ({ loading } : { loading: boolean }) => {
                                     min="0"
                                 />
                             </FormControl>
-                            <FormDescription>Monto a retirar.</FormDescription>
+                            <FormDescription>Monto a { shouldWithdraw ? 'retirar' : 'depositar' }.</FormDescription>
                             <FormMessage />
                         </FormItem>
                     )}

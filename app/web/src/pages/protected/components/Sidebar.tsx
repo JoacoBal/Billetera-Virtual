@@ -22,7 +22,7 @@ const items = [
     },
     {
         title: "Depositar",
-        url: "#",
+        url: "/deposit",
         icon: Inbox,
     },
     {

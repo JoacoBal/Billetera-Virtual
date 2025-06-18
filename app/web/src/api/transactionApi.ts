@@ -53,3 +53,20 @@ export const performWithdraw = async (data : { cvu: string, amount: number}) => 
         return { errors: { general: "Algo salió mal..." } }
     }
 }
+
+export const performDeposit = async (data : { cvu: string, amount: number}) => {
+     try {
+        // Falsear 2 segundos de demora
+        await new Promise((resolve) => setTimeout(resolve, 2000))
+        const result = await httpClient.post(
+            `/deposit`,
+            data
+        );
+        return result.data;
+    } catch (error) {
+        if (error instanceof AxiosError) {
+            return { errors: { general: error.response?.data } }
+        }
+        return { errors: { general: "Algo salió mal..." } }
+    }
+}
