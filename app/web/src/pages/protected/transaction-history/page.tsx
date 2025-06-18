@@ -110,7 +110,7 @@ export const columns: ColumnDef<any>[] = [
                     <DropdownMenuContent align="end">
                         <DropdownMenuLabel>Acciones</DropdownMenuLabel>
                         <DropdownMenuItem
-                            onClick={() => navigator.clipboard.writeText(payment.id)}
+                            onClick={() => navigator.clipboard.writeText(payment.destination_cvu)}
                         >
                             Copiar CVU del contacto
                         </DropdownMenuItem>

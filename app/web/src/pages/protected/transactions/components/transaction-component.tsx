@@ -11,6 +11,7 @@ import type { Wallet } from "@/types"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useEffect, useState } from "react"
 import { useForm, useFormContext } from "react-hook-form"
+import { useNavigate } from "react-router"
 import { toast } from "sonner"
 import { z } from "zod"
 
@@ -28,6 +29,7 @@ export const TransactionComponent = () => {
         mode: 'onTouched',
         resolver: zodResolver(transactionSchema),
     });
+    const navigate = useNavigate();
     const { setError } = form;
     const [loading, setLoading] = useState(false)
     const onSubmit = async (values: z.infer<typeof transactionSchema>) => {
@@ -46,7 +48,8 @@ export const TransactionComponent = () => {
                 });
             });
         } else {
-            toast.success(`La transferencia se realizó con éxito.`)
+            toast.success(`La transferencia se realizó con éxito.`);
+            navigate(0);
         }
     }
     return (
