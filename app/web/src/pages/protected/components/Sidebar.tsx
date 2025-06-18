@@ -37,7 +37,7 @@ const items = [
     },
     {
         title: "Retirar",
-        url: "#",
+        url: "/withdraw",
         icon: Settings,
     },
 ]
