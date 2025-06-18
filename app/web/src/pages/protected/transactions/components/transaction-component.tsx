@@ -38,7 +38,7 @@ export const TransactionComponent = () => {
         setLoading(false);
         if (result.errors) {
             if(result.errors.general) {
-                toast.error(`Hubo un error al procesar la transferencia.`);
+                toast.error(result.errors.general);
                 return;
             }
             Object.entries(result.errors).forEach(([field, message]) => {
