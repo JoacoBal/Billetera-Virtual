@@ -7,6 +7,7 @@ import { Badge, Bitcoin, Loader2, PiggyBank, Plus, WalletIcon } from "lucide-rea
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { WalletDialog } from "./components/WalletCreationForm";
+import { WalletSettingsDialog } from "./components/WalletSettingsForm";
 
 
 // Función para elegir ícono según tipo de wallet
@@ -31,7 +32,7 @@ const WalletsDisplay = () => {
     useEffect(() => {
         const fetchWallets = async () => {
             try {
-                const res = await getAvailableWallets(user!.dni, "cvu,balance,type");
+                const res = await getAvailableWallets(user!.dni, "cvu,balance,type,dni_owner");
                 setWallets(res as any)
             } catch (err: any) {
                 setError(err.message || 'Error fetching wallets')
@@ -64,6 +65,7 @@ const WalletsDisplay = () => {
                                 <div className="flex items-center justify-between">
                                     <CardTitle className="text-lg font-semibold">
                                         Principal
+                                        <WalletSettingsDialog wallet={wallet}/>
                                     </CardTitle>
                                     {getIcon(wallet.type)}
                                 </div>
