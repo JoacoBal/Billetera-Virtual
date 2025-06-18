@@ -4,6 +4,8 @@ import type { Transaction } from "@/types";
 
 export const performTransaction = async (data: Transaction) => {
     try {
+         // Falsear 2 segundos de demora
+        await new Promise((resolve) => setTimeout(resolve, 2000))
         const result = await httpClient.post(
             `/transfer`,
             data

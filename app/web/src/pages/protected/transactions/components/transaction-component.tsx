@@ -11,6 +11,7 @@ import type { Wallet } from "@/types"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useEffect, useState } from "react"
 import { useForm, useFormContext } from "react-hook-form"
+import { toast } from "sonner"
 import { z } from "zod"
 
 const transactionSchema = z.object({
@@ -28,16 +29,24 @@ export const TransactionComponent = () => {
         resolver: zodResolver(transactionSchema),
     });
     const { setError } = form;
-
+    const [loading, setLoading] = useState(false)
     const onSubmit = async (values: z.infer<typeof transactionSchema>) => {
+        setLoading(true);
         const result = await performTransaction(values)
+        setLoading(false);
         if (result.errors) {
+            if(result.errors.general) {
+                toast.error(`Hubo un error al procesar la transferencia.`);
+                return;
+            }
             Object.entries(result.errors).forEach(([field, message]) => {
                 setError(field as any, {
                     type: "server",
                     message: message as string,
                 });
             });
+        } else {
+            toast.success(`La transferencia se realizó con éxito.`)
         }
     }
     return (
@@ -45,7 +54,7 @@ export const TransactionComponent = () => {
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
                 <div className="flex gap-8">
                     <TransactionForm />
-                    <TransactionDetails />
+                    <TransactionDetails loading={loading} />
                 </div>
             </form>
         </Form>
@@ -137,7 +146,7 @@ export const TransactionForm = () => {
                                     min="0"
                                 />
                             </FormControl>
-                            <FormDescription>Monto a enviar.</FormDescription>
+                            <FormDescription>Montof a enviar.</FormDescription>
                             <FormMessage />
                         </FormItem>
                     )}
@@ -169,7 +178,7 @@ export const TransactionForm = () => {
  * Falta añadir que haga un fetch tras ingresar el cvu destino, si la solicitud fue correcta trae consigo algunos datos de la Caja a la que se
  * realiza la transferencia, esos datos se mostrarian acá para que la persona pueda confirmar que la está enviando al lugar correcto.
  */
-export const TransactionDetails = () => {
+export const TransactionDetails = ({ loading }: { loading: boolean }) => {
     const {
         watch,
     } = useFormContext<TransactionFormValues>();
@@ -187,7 +196,7 @@ export const TransactionDetails = () => {
                 <p>No confirmes la transferencia hasta estar seguro de que la cuenta destino sea la correcta!</p>
             </CardContent>
             <CardFooter className="flex justify-end">
-                <Button type="submit" className="w-1/3">Continuar</Button>
+                <Button type="submit" className="w-1/3" disabled={loading}>{loading ? "Procesando..." : "Continuar"}</Button>
             </CardFooter>
         </Card>
     )
