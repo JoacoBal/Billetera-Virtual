@@ -255,32 +255,6 @@ post "#{AppConfig::API_BASE_PATH}/wallets/leave" do
   { message: "Has abandonado la caja compartida con éxito." }.to_json
 end
 
-# Extracción de dinero de una wallet
-post "#{AppConfig::API_BASE_PATH}/wallets/:cvu/extraction" do
-  protected! # Para asegurar que está autenticado
-  content_type :json
-
-  wallet = Wallet.find_by(cvu: params[:cvu])
-  halt 404, { error: 'Wallet no encontrada'}.to_json unless wallet
-
-  #Validar que este usuario tiene permitido operar con dicha wallet
-  unless wallet.users.include?(current_user)
-    halt 403, { error: 'No autorizado para operar con esta wallet'}.to_json
-  end
-
-  data = JSON.parse(request.body.read) rescue{}
-  amount = data['amount'].to_f
-
-  begin
-    nuevo_balance = wallet.extraction(amount)
-    { message: 'Retiro realizado', balance: nuevo_balance}.to_json
-  rescue ArgumentError => e
-    halt 422, { error: e.message }.to_json
-  rescue StandardError => e
-    halt 400, { error: e.message}.to_json
-  end
-end
-
 # Deshabilitar una wallet
 patch "#{AppConfig::API_BASE_PATH}/wallets/:cvu/disable" do
   #protected!
