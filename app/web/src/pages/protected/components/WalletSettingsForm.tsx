@@ -7,15 +7,22 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useSession } from "@/contexts/session-context";
 import type { Wallet } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Plus } from "lucide-react";
+import { Plus, X } from "lucide-react";
 import { useState } from "react";
-import { useForm, useFormContext } from "react-hook-form";
+import { useFieldArray, useForm, useFormContext } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
 
 const walletCreationSchema = z.object({
     type: z.string().min(1, 'El tipo de caja es requerido'),
-    alias: z.string().optional()
+    alias: z.string().optional(),
+     people: z
+    .array(
+      z.object({
+        email: z.string().email('Email inválido'),
+      })
+    )
+    .optional(),
 });
 
 type WalletCreationFormValues = z.infer<typeof walletCreationSchema>;
@@ -85,6 +92,11 @@ const WalletSettingsForm = ({ loading, wallet }: { loading: boolean, wallet: Par
     } = useFormContext<WalletCreationFormValues>();
     const { user } = useSession();
     const isOwner = wallet.dni_owner == user?.dni;
+    
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: 'people',
+  })
     return (<div className="space-y-8">
         {isOwner ?
             <FormField
@@ -104,7 +116,54 @@ const WalletSettingsForm = ({ loading, wallet }: { loading: boolean, wallet: Par
                 )}
             /> : undefined
         }
-        <Button type="submit" className="w-full" disabled={loading}>{loading ? "Procesando..." : "Guardar"}</Button>
+        {isOwner ? 
+        <div>
+<div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <h4 className="text-md font-semibold">Personas autorizadas</h4>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+            onClick={() => append({ email: ''})} 
+            >
+              <Plus className="w-4 h-4 mr-1" />
+              Agregar
+            </Button>
+          </div>
+
+          {fields.map((field: any, index: any) => (
+            <div key={field.id} className="flex gap-4 items-end">
+              <div className="flex-1">
+                <FormField
+                  control={control}
+                  name={`people.${index}.email`}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Email</FormLabel>
+                      <FormControl>
+                        <Input {...field} placeholder="correo@ejemplo.com" />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                onClick={() => remove(index)}
+              >
+                <X className="w-4 h-4 text-red-500" />
+              </Button>
+            </div>
+          ))}
+        </div>
+        </div> : undefined
+        }
+        
+        <Button type="submit" className="w-full" disabled={loading}>{loading ? "Procesando..." : isOwner ? "Guardar" : "Abandonar"}</Button>
     </div>
     )
 }
