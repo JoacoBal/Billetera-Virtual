@@ -7,7 +7,7 @@ module WalletsService
     # Verificar que el usuario exista
     user = User.find_by(dni: dni_owner)
     raise ActiveRecord::RecordNotFound, "Usuario con DNI #{dni_owner} no existe" if user.nil?
-    raise ArgumentError, "Tipo inválido. Debe ser 'principal' o 'secondary'" unless %w[principal secondary].include?(type)
+    raise ArgumentError, "Tipo inválido. Debe ser 'principal' o 'secondary'" unless %w[principal secondary shared].include?(type)
     
     wallet = Wallet.create_wallet!(
       dni_owner: dni_owner,

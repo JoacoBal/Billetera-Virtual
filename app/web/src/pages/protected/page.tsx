@@ -13,7 +13,7 @@ import { WalletSettingsDialog } from "./components/WalletSettingsForm";
 // Función para elegir ícono según tipo de wallet
 const getIcon = (type: Wallet['type']) => {
     switch (type) {
-        case 'personal':
+        case 'principal':
             return <WalletIcon className="h-6 w-6 text-muted-foreground" />
         case 'crypto':
             return <Bitcoin className="h-6 w-6 text-muted-foreground" />
@@ -32,8 +32,17 @@ const WalletsDisplay = () => {
     useEffect(() => {
         const fetchWallets = async () => {
             try {
-                const res = await getAvailableWallets(user!.dni, "cvu,balance,type,dni_owner");
-                setWallets(res as any)
+                const res = await getAvailableWallets(user!.dni, "cvu,balance,type,dni_owner,alias,members");
+                const ordered = (res as any[]).sort((a, b) => {
+                    const typePriority: Record<string, number> = {
+                        principal: 0,
+                        secondary: 1,
+                        shared: 2,
+                    }
+
+                    return typePriority[a.type] - typePriority[b.type]
+                })
+                setWallets(ordered)
             } catch (err: any) {
                 setError(err.message || 'Error fetching wallets')
             } finally {
@@ -64,8 +73,8 @@ const WalletsDisplay = () => {
                             <CardHeader className="space-y-1 pb-2">
                                 <div className="flex items-center justify-between">
                                     <CardTitle className="text-lg font-semibold">
-                                        Principal
-                                        <WalletSettingsDialog wallet={wallet}/>
+                                        {wallet.type}
+                                        <WalletSettingsDialog wallet={wallet} />
                                     </CardTitle>
                                     {getIcon(wallet.type)}
                                 </div>

@@ -32,7 +32,13 @@ get "#{AppConfig::API_BASE_PATH}/wallets/:dni" do
       
       projected_wallets = wallets.map do |wallet|
         data = wallet.respond_to?(:attributes) ? wallet.attributes : wallet.as_json
-        data.slice(*selected_fields)
+        projection = data.slice(*selected_fields)
+
+        if selected_fields.include?('members') && wallet.type == 'shared'
+          projection['members'] = wallet.shared_member_emails
+        end
+
+        projection
       end
 
       projected_wallets.to_json
@@ -52,12 +58,17 @@ post "#{AppConfig::API_BASE_PATH}/wallets" do
 
   unless missing_keys.empty?
     status 400
-    return { error: "Faltan los siguientes campos requeridos: #{missing_keys.join(', ')}" }.to_json
+    return { errors: { general: "Faltan los siguientes campos requeridos: #{missing_keys.join(', ')}" } }.to_json
   end
 
   dni_owner = data["dni_owner"]
   type = data["type"]
   alias_name = data["alias"] # puede ser nil
+  
+  if type == "principal"
+    status 400
+    return { errors: { general: "No es posible crear una caja de tipo principal, sólo es 1 por usuario." } }.to_json
+  end
 
   begin
     wallet = WalletsService.create_wallets(dni_owner: dni_owner, type: type, alias_name: alias_name)
@@ -66,16 +77,16 @@ post "#{AppConfig::API_BASE_PATH}/wallets" do
     wallet.to_json
   rescue ActiveRecord::RecordInvalid => e
     status 422
-    { error: e.record.errors.full_messages.join(', ') }.to_json
+    { errors: { general: e.record.errors.full_messages.join(', ') } }.to_json
   rescue ArgumentError, StandardError => e
     status 400
-    { error: e.message }.to_json
+    { errors: { general: e.message } }.to_json
   rescue JSON::ParserError
     status 400
-    { error: "JSON inválido" }.to_json
+    { errors: { general: "JSON inválido" } }.to_json
   rescue => e
     status 500
-    { error: "Error inesperado: #{e.message}" }.to_json
+    { errors: { general: "Error inesperado: #{e.message}" } }.to_json
   end
 end
 
@@ -157,4 +168,63 @@ content_type :json
     balance: wallet.balance,
     owner: wallet.owner.name
   }.to_json
+end
+
+post "#{AppConfig::API_BASE_PATH}/wallets/edit" do
+  protected!
+  data = JSON.parse(request.body.read)
+  cvu = data["cvu"]
+  new_members_emails = data["members"]&.map(&:strip)&.map(&:downcase)&.uniq
+  new_alias = data["alias"]
+
+  if new_members_emails.nil? && new_alias.nil?
+    halt 400, { errors: { general: "No hay campos para actualizar" } }.to_json
+  end
+
+  wallet = Wallet.find_by(cvu: cvu)
+  halt 404, { errors: { general: "La caja no fue encontrada" } }.to_json unless wallet
+  begin
+    ActiveRecord::Base.transaction do
+      # Si hay alias, actualizarlo
+      if new_alias
+        wallet.alias = new_alias
+        wallet.save!
+      end
+      # Si hay miembros y es una wallet compartida
+        
+      if new_members_emails && wallet.type == "shared"
+        owner = User.find_by(dni: wallet.dni_owner)
+        owner_email = owner&.email&.downcase
+
+        if new_members_emails.include?(owner_email)
+          halt 400, { errors: { general: "No se puede agregar al dueño de la wallet como miembro" } }.to_json
+        end
+
+        users = User.where(email: new_members_emails)
+        existing_emails = users.map(&:email)
+        missing_emails = new_members_emails - existing_emails
+
+        unless missing_emails.empty?
+          halt 400, { errors: { general: "Usuarios no encontrados: #{missing_emails.join(', ')}" } }.to_json
+        end
+      
+        # Eliminar miembros actuales excepto el dueño
+        WalletMember.where(wallet_cvu: cvu)
+                    .where.not(user_dni: wallet.dni_owner)
+                    .delete_all
+
+        # Agregar nuevos miembros
+        users.each do |user|
+          WalletMember.create!(user_dni: user.dni, wallet_cvu: cvu)
+        end
+      elsif new_members_emails && wallet.type != "shared"
+        halt 400, { errors: { general: "Solo se pueden modificar miembros en wallets compartidas" } }.to_json
+      end
+    end
+  rescue ActiveRecord::RecordNotUnique
+      halt 400, { errors: { general: "El alias ya está en uso por otra wallet" } }.to_json
+  end
+
+  content_type :json
+  { message: "Wallet actualizada correctamente" }.to_json
 end

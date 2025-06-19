@@ -12,6 +12,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm, useFormContext } from "react-hook-form"
 import { z } from "zod"
 import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router";
 
 const withdrawSchema = z.object({
     cvu: z.string().min(1, 'El CVU de origen de identidad es requerido'),
@@ -28,6 +29,7 @@ export const WithdrawPage = ({ type } : { type: 'withdraw' | 'deposit' }) => {
     const { setError, watch } = form;
     const [loading, setLoading] = useState(false)
     const shouldWithdraw = type == 'withdraw';
+    const navigate = useNavigate();
     const onSubmit = async (values: z.infer<typeof withdrawSchema>) => {
         setLoading(true)
         const result = shouldWithdraw ? await performWithdraw(values) : await performDeposit(values);
@@ -44,7 +46,8 @@ export const WithdrawPage = ({ type } : { type: 'withdraw' | 'deposit' }) => {
                 });
             });
         } else {
-            toast.success(`Se ${ shouldWithdraw ? 'retiró' : 'depositó' } ${watch("amount")} ARS`)
+            toast.success(`Se ${ shouldWithdraw ? 'retiró' : 'depositó' } ${watch("amount")} ARS`);
+            navigate("/");
         }
     }
     return (

@@ -21,7 +21,7 @@ class Wallet < ActiveRecord::Base
   validates :cvu, presence: true, uniqueness: true
   validates :dni_owner, presence: true
   validates :balance, numericality: { greater_than_or_equal_to: 0 }
-  validates :type, presence: true, inclusion: { in: %w[principal secondary] }
+  validates :type, presence: true, inclusion: { in: %w[principal secondary shared] }
 
   validate :only_one_principal_wallet_per_user
 
@@ -33,6 +33,16 @@ class Wallet < ActiveRecord::Base
       WalletMember.create!(user: user, wallet: wallet)
       wallet
     end
+  end
+
+  def shared_member_emails
+    return [] unless type == 'shared'
+
+    WalletMember
+    .includes(:user)
+    .where(wallet_cvu: cvu)
+    .map { |wm| wm.user&.email }
+    .compact
   end
 
   private

@@ -75,7 +75,7 @@ export const TransactionForm = () => {
     useEffect(() => {
         const fetchOptions = async () => {
             try {
-                const result = await getAvailableWallets(user!.dni, "cvu");
+                const result = await getAvailableWallets(user!.dni, "cvu,balance");
                 setOptions(result);
             } catch (err) {
                 console.error("Error fetching options:", err);
@@ -107,7 +107,7 @@ export const TransactionForm = () => {
                                     <SelectContent>
                                         {options.map((option: Partial<Wallet>) => (
                                             <SelectItem key={option.cvu} value={option.cvu!}>
-                                                {option.cvu!}
+                                                {option.cvu!} - $ {option.balance}
                                             </SelectItem>
                                         ))}
                                     </SelectContent>

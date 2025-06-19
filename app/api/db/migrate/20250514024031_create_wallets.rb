@@ -13,6 +13,6 @@ class CreateWallets < ActiveRecord::Migration[8.0]
 
     add_index :wallets, :cvu, unique: true
     add_index :wallets, :alias, unique: true
-    add_check_constraint :wallets, "type IN ('principal', 'secondary')", name: "wallet_type_check"
+    add_check_constraint :wallets, "type IN ('principal', 'secondary', 'shared')", name: "wallet_type_check"
   end
 end
