@@ -53,7 +53,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_19_041535) do
     t.boolean "enabled", default: true, null: false
     t.index ["alias"], name: "index_wallets_on_alias", unique: true
     t.index ["cvu"], name: "index_wallets_on_cvu", unique: true
-    t.check_constraint "type IN ('principal', 'secondary')", name: "wallet_type_check"
+    t.check_constraint "type IN ('principal', 'secondary', 'shared')", name: "wallet_type_check"
   end
 
   add_foreign_key "transactions", "wallets", column: "destination_cvu", primary_key: "cvu"

@@ -22,7 +22,7 @@ export interface Wallet {
     dni_owner: string,
     alias: string,
     balance: number,
-    type: string
+    type: string,
 }
 
 export interface Contact {

@@ -116,3 +116,89 @@ get "#{AppConfig::API_BASE_PATH}/transactions" do
   }.to_json
 end
 
+post "#{AppConfig::API_BASE_PATH}/deposit" do
+  protected!
+  data = JSON.parse(request.body.read)
+
+  cvu = data["cvu"]
+  amount = data["amount"].to_d
+
+  if cvu.blank? || amount <= 0
+    status 400
+    content_type :json
+    return { errors: { general: "CVU inválido o monto no permitido" } }.to_json
+  end
+
+  begin
+    wallet = Wallet.find_by(cvu: cvu)
+
+    unless wallet
+      status 404
+      content_type :json
+      return { errors: { cvu: "No se encontró una billetera con ese CVU" } }.to_json
+    end
+
+    wallet.balance += amount
+    wallet.save!
+
+    status 200
+    content_type :json
+    { message: "Depósito exitoso" }.to_json
+  rescue ActiveRecord::RecordInvalid => e
+    status 422
+    content_type :json
+    formatted_errors = e.record.errors.to_hash(true).transform_values(&:first)
+    { errors: formatted_errors }.to_json
+  rescue => e
+    status 400
+    content_type :json
+    { errors: { general: e.message } }.to_json
+  end
+end
+
+post "#{AppConfig::API_BASE_PATH}/withdraw" do
+  protected!
+  data = JSON.parse(request.body.read)
+
+  cvu = data["cvu"]
+  amount = data["amount"].to_d
+
+  if cvu.blank? || amount <= 0
+    status 400
+    content_type :json
+    return { errors: { general: "CVU inválido o monto no permitido" } }.to_json
+  end
+
+  begin
+    wallet = Wallet.find_by(cvu: cvu)
+
+    unless wallet
+      status 404
+      content_type :json
+      return { errors: { cvu: "No se encontró una billetera con ese CVU" } }.to_json
+    end
+
+    if wallet.balance < amount
+      status 403
+      content_type :json
+      return { errors: { balance: "Saldo insuficiente para realizar el retiro" } }.to_json
+    end
+
+    wallet.balance -= amount
+    wallet.save!
+
+    status 200
+    content_type :json
+    { message: "Retiro exitoso", new_balance: wallet.balance.to_s }.to_json
+  rescue ActiveRecord::RecordInvalid => e
+    status 422
+    content_type :json
+    formatted_errors = e.record.errors.to_hash(true).transform_values(&:first)
+    { errors: formatted_errors }.to_json
+  rescue => e
+    status 400
+    content_type :json
+    { errors: { general: e.message } }.to_json
+  end
+end
+

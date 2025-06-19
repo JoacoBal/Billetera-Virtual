@@ -4,10 +4,12 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useSession } from "@/contexts/session-context";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Plus } from "lucide-react";
 import { useState } from "react";
 import { useForm, useFormContext } from "react-hook-form";
+import { useNavigate } from "react-router";
 import { toast } from "sonner";
 import { z } from "zod";
 
@@ -45,11 +47,13 @@ const WalletCreationComponent = () => {
         resolver: zodResolver(walletCreationSchema),
     });
     const { setError } = form;
+    const { user } = useSession();
     const [loading, setLoading] = useState(false)
+    const navigate = useNavigate();
 
     const onSubmit = async (values: z.infer<typeof walletCreationSchema>) => {
         setLoading(true)
-        const result = await createWallet(values.type as any, values.alias);
+        const result = await createWallet(user!.dni, values.type as any, values.alias);
         setLoading(false)
         if (result.errors) {
             if(result.errors.general) {
@@ -63,7 +67,8 @@ const WalletCreationComponent = () => {
                 });
             });
         } else {
-            toast.success(`Se creó la caja con éxito.`)
+            toast.success(`Se creó la caja con éxito.`);
+            navigate(0);
         }
     }
     return (
@@ -82,7 +87,7 @@ const WalletCreationForm = ({ loading } : { loading: boolean }) => {
         register,
     } = useFormContext<WalletCreationFormValues>();
 
-    const [options] = useState<string[]>(['secondary']);
+    const [options] = useState<string[]>(['secondary', 'shared']);
 
     return (<div className="space-y-8">
         <FormField

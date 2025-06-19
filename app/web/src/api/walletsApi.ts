@@ -14,13 +14,14 @@ export const getAvailableWallets = async (dni: string, fields: string) => {
     return result.data;
 };
 
-export const createWallet = async (type: 'secondary' | 'shared', alias: string | undefined) => {
+export const createWallet = async (dni: string, type: 'secondary' | 'shared', alias: string | undefined) => {
     try {
         // Falsear 2 segundos de demora
         await new Promise((resolve) => setTimeout(resolve, 2000))
         const result = await httpClient.post(
             `/wallets`,
             {
+                dni_owner: dni,
                 type,
                 alias
             }
@@ -33,3 +34,24 @@ export const createWallet = async (type: 'secondary' | 'shared', alias: string |
         return { errors: { general: "Algo salió mal..." } }
     }
 }
+
+export const editWallet = async (cvu: string, alias: string | undefined, members: any) => {
+    try {
+        // Falsear 2 segundos de demora
+        await new Promise((resolve) => setTimeout(resolve, 2000))
+        const result = await httpClient.post(
+            `/wallets/edit`,
+            {
+                cvu,
+                alias,
+                members
+            }
+        );
+        return result.data;
+    } catch (error) {
+        if (error instanceof AxiosError) {
+            return { errors: { general: error.response?.data } }
+        }
+        return { errors: { general: "Algo salió mal..." } }
+    }
+} 

@@ -178,7 +178,7 @@ export function DataTableDemo() {
             <div className="flex items-center pb-4">
                 <Input
                     placeholder="Filtrar cvu..."
-                    value={(table.getColumn("cvu")?.getFilterValue() as string) ?? ""}
+                    value={""} // (table.getColumn("cvu")?.getFilterValue() as string)
                     onChange={(event) =>
                         table.getColumn("cvu")?.setFilterValue(event.target.value)
                     }
