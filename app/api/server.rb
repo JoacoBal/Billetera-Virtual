@@ -12,7 +12,6 @@ require_relative 'models/user'
 require_relative 'models/wallet'
 require_relative 'models/wallet_member'
 require_relative 'models/transaction'
-require_relative 'models/deposit' 
 
 Dir["./services/**/*.rb"].each { |file| require_relative file }
 Dir["./controllers/**/*.rb"].each { |file| require_relative file }
@@ -94,24 +93,4 @@ class App < Sinatra::Application
       }.to_json
     end
   end
-
-  #deposito de dinero
-	  
-	post "/add" do
-	  content_type :json
-	  data = JSON.parse(request.body.read)
-
-	  wallet = Wallet.find_by!(cvu: data["cvu"])
-	  amount = data["amount"].to_f
-
-	  halt 400, { error: "Monto inválido" }.to_json if amount <= 0
-
-	  Deposit.create!(wallet_cvu: wallet.cvu, amount: amount)
-
-	  status 200
-	  { message: "Depósito realizado con éxito", new_balance: wallet.reload.balance }.to_json
-	end
-
-  
-  
 end
