@@ -96,3 +96,48 @@ get "#{AppConfig::API_BASE_PATH}/transactions" do
     end
   }.to_json
 end
+
+#Retirar dinero de una wallet
+post "#{AppConfig::API_BASE_PATH}/extraction" do
+  #protected!
+  user = current_user
+  wallets = user.available_wallets
+  data = JSON.parse(request.body.read)
+
+  origin_cvu = data["origin_cvu"]
+  amount = data["amount"].to_d
+  description = data["description"] || "Retiro de dinero"
+
+  wallet = wallets.find { |w| w.cvu == origin_cvu }
+
+  halt 403, { error: "No tenes permiso para operar con este CVU" }.to_json unless wallet
+  halt 400, { error: "El monto debe ser mayor a 0"}.to_json if amount <= 0
+  halt 400, { error: "Saldo insuficiente"}.to_json if wallet.balance < amount
+
+  begin 
+    ActiveRecord::Base.transaction do
+      Transaction.create!(
+        origin_cvu: origin_cvu,
+        destination_cvu: nil,
+        amount: amount,
+        description: description
+      )
+
+      wallet.update!(balance: wallet.balance - amount)
+  end
+
+  status 200
+  content_type :json
+  { message: "Retiro exitoso", new_balance: wallet.reload.balance }.to_json
+
+rescue ActiveRecord::RecordInvalid => e
+  status 422
+  content_type :json
+  formatted_errors = e.record.errors.to_hash(true).transform_values { |messages| messages.first }
+  { errors: formatted_errors }.to_json
+rescue => e
+  status 500
+  content_type :json
+  { error: "Ocurrio un error: #{e.message}"}.to_json
+end
+end

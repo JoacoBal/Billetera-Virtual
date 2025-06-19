@@ -35,6 +35,20 @@ class Wallet < ActiveRecord::Base
     end
   end
 
+  # Method to extract money from a wallet
+  #
+  # @param amount[Decimal, Float], monto a retirar (debe ser > 0)
+  # @raise [StandarError] si no hay fondos suficientes o monto inválido
+  # @[Decimal] nuevo balance después del retiro
+  def extraction(amount)
+    raise ArgumentError, 'El monto debe ser mayor a 0' if amount <= 0
+    raise StandardError, Errors::TRANSACTION[:insufficient_funds][:message] if balance < amount
+
+    self.balance -= amount
+    self.save!
+    self.balance # devuelve el nuevo balance
+  end
+
   private
   # Validates that a user can only have one wallet of type 'principal'.
   #
@@ -61,4 +75,9 @@ class Wallet < ActiveRecord::Base
 
     "#{fixed_prefix}#{random_suffix}"
   end
+
 end
+
+
+
+
