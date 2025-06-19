@@ -93,4 +93,38 @@ class App < Sinatra::Application
       }.to_json
     end
   end
+  
+  
+  
+  post "#{AppConfig::API_BASE_PATH}/add" do
+	  content_type :json
+	  data = JSON.parse(request.body.read)
+	  cvu = data['cvu']
+	  amount = data['amount']&.to_f
+
+	  unless amount > 0
+		status 400
+		return { error: 'El monto debe ser positivo' }.to_json
+	  end
+
+	  begin
+		wallet = Wallet.find_by!(cvu: cvu)
+
+		
+		new_balance = wallet.balance + amount
+		wallet.update!(balance: new_balance)
+
+		status 200
+		{ message: "Depósito realizado con éxito", new_balance: wallet.balance }.to_json # wallet.balance valor actualizado
+	  rescue ActiveRecord::RecordNotFound
+		status 404
+		{ error: "Cartera con CVU #{cvu} no encontrada" }.to_json
+	  rescue => e
+		status 500
+		{ error: "Error interno del servidor: #{e.message}" }.to_json
+	  end
+  end
+  
+  
+  
 end
