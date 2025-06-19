@@ -69,31 +69,55 @@ get "#{AppConfig::API_BASE_PATH}/transactions" do
     .or(Transaction.where(destination_cvu: wallet_cvus))
     .count
 
+  results = []
+  transactions.each do |tx|
+    origin_owned = wallet_cvus.include?(tx.origin_cvu)
+    dest_owned = wallet_cvus.include?(tx.destination_cvu)
+
+    if origin_owned
+      results << {
+        origin_cvu: tx.origin_cvu,
+        destination_cvu: tx.destination_cvu,
+        amount: tx.amount,
+        description: tx.description,
+        created_at: tx.created_at,
+        type: "sent",
+        contact: tx.destination_wallet&.owner && {
+          name: tx.destination_wallet.owner.name,
+          last_name: tx.destination_wallet.owner.lastName,
+          email: tx.destination_wallet.owner.email,
+          dni: tx.destination_wallet.owner.dni
+        }
+      }
+    end
+
+    if dest_owned
+      results << {
+        origin_cvu: tx.origin_cvu,
+        destination_cvu: tx.destination_cvu,
+        amount: tx.amount,
+        description: tx.description,
+        created_at: tx.created_at,
+        type: "received",
+        contact: tx.origin_wallet&.owner && {
+          name: tx.origin_wallet.owner.name,
+          last_name: tx.origin_wallet.owner.lastName,
+          email: tx.origin_wallet.owner.email,
+          dni: tx.origin_wallet.owner.dni
+        }
+      }
+    end
+  end
+
+  results.sort_by! { |tx| [-tx[:created_at].to_i, tx[:type] == "sent" ? 1 : 0] }
+
   content_type :json
   {
     page: page,
     per_page: per_page,
     total: total_count,
     total_pages: (total_count.to_f / per_page).ceil,
-    transactions: transactions.map do |tx|
-      type = wallet_cvus.include?(tx.origin_cvu) ? "sent" : "received"
-      contact_user = type == "sent" ? tx.destination_wallet&.owner : tx.origin_wallet&.owner
-
-      {
-        origin_cvu: tx.origin_cvu,
-        destination_cvu: tx.destination_cvu,
-        amount: tx.amount,
-        description: tx.description,
-        created_at: tx.created_at,
-        type: type,
-        contact: contact_user && {
-          name: contact_user.name,
-          last_name: contact_user.lastName,
-          email: contact_user.email,
-          dni: contact_user.dni
-        }
-      }
-    end
+    transactions: results
   }.to_json
 end
 

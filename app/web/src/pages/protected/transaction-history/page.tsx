@@ -57,6 +57,31 @@ export const columns: ColumnDef<any>[] = [
         }
     },
     {
+        accessorKey: "cvu",
+        header: ({ column }) => {
+            return (
+                <Button
+                    variant="ghost"
+                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                >
+                    CVU/Alias
+                    <ArrowUpDown />
+                </Button>
+            )
+        },
+        cell: ({ row }) => {
+            const src = row.original.origin_cvu
+            const dest = row.original.destination_cvu
+
+            return (
+                <div>
+                    <div className="font-medium">Desde: {src}</div>
+                    <div className="text-sm text-muted-foreground">Hacia: {dest}</div>
+                </div>
+            )
+        }
+    },
+    {
         accessorKey: "created_at",
         header: () => <div className="text-right">Fecha</div>,
         cell: ({ row }) => {
