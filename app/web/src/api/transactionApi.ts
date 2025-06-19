@@ -50,7 +50,7 @@ export const performWithdraw = async (data : { cvu: string, amount: number}) => 
         return result.data;
     } catch (error) {
         if (error instanceof AxiosError) {
-            return { errors: { general: error.response?.data } }
+            return error.response?.data
         }
         return { errors: { general: "Algo salió mal..." } }
     }
@@ -67,7 +67,7 @@ export const performDeposit = async (data : { cvu: string, amount: number}) => {
         return result.data;
     } catch (error) {
         if (error instanceof AxiosError) {
-            return { errors: { general: error.response?.data } }
+            return error.response?.data
         }
         return { errors: { general: "Algo salió mal..." } }
     }

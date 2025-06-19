@@ -11,7 +11,7 @@ import {
     SidebarMenuItem,
 } from "@/components/ui/sidebar"
 import { useSession } from "@/contexts/session-context"
-import { Calendar, ChevronUp, Home, Inbox, Search, Settings, User2 } from "lucide-react"
+import { ArrowDownRight, ArrowLeftRight, ArrowUpRight, Calendar, ChevronUp, Home, User2 } from "lucide-react"
 import { useNavigate } from "react-router"
 
 const items = [
@@ -23,22 +23,22 @@ const items = [
     {
         title: "Depositar",
         url: "/deposit",
-        icon: Inbox,
+        icon: ArrowDownRight,
     },
     {
         title: "Transferir",
         url: "/transfer",
-        icon: Calendar,
+        icon: ArrowLeftRight,
     },
     {
         title: "Movimientos",
         url: "/transactions",
-        icon: Search,
+        icon: Calendar,
     },
     {
         title: "Retirar",
         url: "/withdraw",
-        icon: Settings,
+        icon: ArrowUpRight,
     },
 ]
 
@@ -48,7 +48,7 @@ export const SidebarComponent = () => {
         <Sidebar>
             <SidebarContent>
                 <SidebarGroup>
-                    <SidebarGroupLabel>Application</SidebarGroupLabel>
+                    <SidebarGroupLabel>YourWallet</SidebarGroupLabel>
                     <SidebarGroupContent>
                         <SidebarMenu>
                             {items.map((item) => (

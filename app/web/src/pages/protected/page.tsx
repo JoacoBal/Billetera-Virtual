@@ -1,5 +1,4 @@
 import { getAvailableWallets } from "@/api/walletsApi";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useSession } from "@/contexts/session-context";
 import type { Wallet } from "@/types";
@@ -56,7 +55,7 @@ const WalletsDisplay = () => {
         <main className="p-6">
 
             <div className="flex items-center justify-between mb-6">
-                <h1 className="text-2xl font-bold">My Wallets</h1>
+                <h1 className="text-2xl font-bold">Cajas disponibles</h1>
                 <WalletDialog />
             </div>
 
@@ -80,7 +79,7 @@ const WalletsDisplay = () => {
                                 </div>
                                 <div className="text-sm text-muted-foreground">
                                     <div>CVU: {wallet.cvu}</div>
-                                    {wallet.alias ? <div>Alias: {wallet.alias}</div> : undefined}
+                                    {wallet.alias ? <div>Alias: {wallet.alias}</div> : <div>-</div>}
                                 </div>
                             </CardHeader>
                             <CardContent>

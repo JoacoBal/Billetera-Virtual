@@ -72,7 +72,7 @@ const WithdrawForm = ({ loading, shouldWithdraw } : { loading: boolean, shouldWi
     useEffect(() => {
         const fetchWallets = async () => {
             try {
-                const res = await getAvailableWallets(user!.dni, "cvu,balance");
+                const res = await getAvailableWallets(user!.dni, "cvu,balance,alias");
                 setWallets(res as any)
             } catch (err) {
                 toast.error('Error fetching wallets')
@@ -103,7 +103,7 @@ const WithdrawForm = ({ loading, shouldWithdraw } : { loading: boolean, shouldWi
                                     <SelectContent>
                                         {wallets.map((option: Partial<Wallet>) => (
                                             <SelectItem key={option.cvu} value={option.cvu!}>
-                                                {option.cvu!} - $ {option.balance}
+                                                {option.cvu!} - {option.alias ? option.alias + " -" : ""} $ {option.balance}
                                             </SelectItem>
                                         ))}
                                     </SelectContent>

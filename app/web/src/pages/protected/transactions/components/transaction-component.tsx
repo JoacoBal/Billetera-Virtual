@@ -75,7 +75,7 @@ export const TransactionForm = () => {
     useEffect(() => {
         const fetchOptions = async () => {
             try {
-                const result = await getAvailableWallets(user!.dni, "cvu,balance");
+                const result = await getAvailableWallets(user!.dni, "cvu,balance,alias");
                 setOptions(result);
             } catch (err) {
                 console.error("Error fetching options:", err);
@@ -107,7 +107,7 @@ export const TransactionForm = () => {
                                     <SelectContent>
                                         {options.map((option: Partial<Wallet>) => (
                                             <SelectItem key={option.cvu} value={option.cvu!}>
-                                                {option.cvu!} - $ {option.balance}
+                                                {option.cvu!} - {option.alias ? option.alias + " -" : ""} $ {option.balance}
                                             </SelectItem>
                                         ))}
                                     </SelectContent>
@@ -126,7 +126,7 @@ export const TransactionForm = () => {
                             <FormLabel>CVU destino</FormLabel>
                             <FormControl>
 
-                                <Input placeholder="shadcn" {...register("destination_cvu")} {...field} />
+                                <Input placeholder="xxxxxxxxxxxxxxx" {...register("destination_cvu")} {...field} />
 
                             </FormControl>
                             <FormDescription>A esta caja se le enviarán los fondos.</FormDescription>
@@ -142,7 +142,7 @@ export const TransactionForm = () => {
                             <FormLabel>Monto</FormLabel>
                             <FormControl>
                                 <Input
-                                    placeholder="shadcn" {...field}
+                                    placeholder="0.0" {...field}
                                     {...register("amount", { valueAsNumber: true })}
                                     type="number"
                                     step="0.01"

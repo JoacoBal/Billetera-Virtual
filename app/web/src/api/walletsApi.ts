@@ -29,7 +29,7 @@ export const createWallet = async (dni: string, type: 'secondary' | 'shared', al
         return result.data;
     } catch (error) {
         if (error instanceof AxiosError) {
-            return { errors: { general: error.response?.data } }
+            return error.response?.data
         }
         return { errors: { general: "Algo salió mal..." } }
     }
@@ -50,7 +50,7 @@ export const editWallet = async (cvu: string, alias: string | undefined, members
         return result.data;
     } catch (error) {
         if (error instanceof AxiosError) {
-            return { errors: { general: error.response?.data } }
+            return error.response?.data
         }
         return { errors: { general: "Algo salió mal..." } }
     }

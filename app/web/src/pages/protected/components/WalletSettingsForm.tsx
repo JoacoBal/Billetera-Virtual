@@ -7,9 +7,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useSession } from "@/contexts/session-context";
 import type { Wallet } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Plus, X } from "lucide-react";
+import { Plus, Settings, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useFieldArray, useForm, useFormContext } from "react-hook-form";
+import { useNavigate } from "react-router";
 import { toast } from "sonner";
 import { z } from "zod";
 
@@ -32,9 +33,8 @@ export const WalletSettingsDialog = ({ wallet }: { wallet: Partial<Wallet> }) =>
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="default" size="sm">
-          <Plus className="w-4 h-4 mr-2" />
-          Opciones
+        <Button variant="secondary" size="sm" className="ml-2">
+          <Settings className="w-4 h-4"/>
         </Button>
       </DialogTrigger>
       <DialogContent className="max-w-2xl">
@@ -57,15 +57,16 @@ const WalletSettingsComponent = ({ wallet }: { wallet: Partial<Wallet> }) => {
   });
   const { setError } = form;
   const [loading, setLoading] = useState(false)
+  const navigate = useNavigate();
 
   const onSubmit = async (values: z.infer<typeof walletCreationSchema>) => {
     setLoading(true)
     const emails = values.people?.map((person) => person.email) ?? [];
-    const result = await editWallet(wallet.cvu!, values.alias, emails);
-    setLoading(false)
+    const result = await editWallet(wallet.cvu!, values.alias, wallet.type != "shared" ? undefined : emails);
+    setLoading(false)   
     if (result.errors) {
       if (result.errors.general) {
-        toast.error(`Hubo un error al procesar la modificación de la caja.`);
+        toast.error(result.errors.general);
         return;
       }
       Object.entries(result.errors).forEach(([field, message]) => {
@@ -75,7 +76,8 @@ const WalletSettingsComponent = ({ wallet }: { wallet: Partial<Wallet> }) => {
         });
       });
     } else {
-      toast.success(`Se modificó la caja con éxito.`)
+      toast.success(`Se modificó la caja con éxito.`);
+      navigate(0);
     }
   }
   return (
@@ -120,7 +122,7 @@ const WalletSettingsForm = ({ loading, wallet }: { loading: boolean, wallet: Par
         )}
       /> : undefined
     }
-    {isOwner ?
+    {isOwner && wallet.type == "shared" ?
       <div>
         <div className="space-y-4">
           <div className="flex items-center justify-between">
