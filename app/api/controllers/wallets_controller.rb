@@ -172,6 +172,7 @@ end
 
 post "#{AppConfig::API_BASE_PATH}/wallets/edit" do
   protected!
+
   data = JSON.parse(request.body.read)
   cvu = data["cvu"]
   new_members_emails = data["members"]&.map(&:strip)&.map(&:downcase)&.uniq
@@ -193,6 +194,7 @@ post "#{AppConfig::API_BASE_PATH}/wallets/edit" do
       # Si hay miembros y es una wallet compartida
         
       if new_members_emails && wallet.type == "shared"
+
         owner = User.find_by(dni: wallet.dni_owner)
         owner_email = owner&.email&.downcase
 
@@ -227,4 +229,26 @@ post "#{AppConfig::API_BASE_PATH}/wallets/edit" do
 
   content_type :json
   { message: "Wallet actualizada correctamente" }.to_json
+end
+
+post "#{AppConfig::API_BASE_PATH}/wallets/leave" do
+  protected!
+  user = current_user
+  data = JSON.parse(request.body.read)
+  cvu = data["cvu"]
+  wallet = Wallet.find_by(cvu: cvu)
+  halt 404, { errors: { general: "La caja no fue encontrada" } }.to_json unless wallet
+  
+  if wallet.type != "shared"
+    halt 400, { errors: { general: "No puedes abandonar una caja si no es compartida." } }.to_json
+  end
+  if wallet.dni_owner == user.dni
+    halt 400, { errors: { general: "No puedes abandonar una caja compartida si eres el dueño." } }.to_json
+  end
+  WalletMember.where(wallet_cvu: cvu)
+              .where(user_dni: user.dni)
+              .delete_all
+
+  content_type :json
+  { message: "Has abandonado la caja compartida con éxito." }.to_json
 end

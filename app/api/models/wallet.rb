@@ -41,6 +41,7 @@ class Wallet < ActiveRecord::Base
     WalletMember
     .includes(:user)
     .where(wallet_cvu: cvu)
+    .where.not(user_dni: dni_owner)
     .map { |wm| wm.user&.email }
     .compact
   end
