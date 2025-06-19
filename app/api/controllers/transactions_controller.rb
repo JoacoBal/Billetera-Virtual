@@ -21,25 +21,6 @@ post "#{AppConfig::API_BASE_PATH}/transfer" do
     return { errors: { permission: "No tenés permiso para usar ese CVU de origen" } }.to_json
   end
 
-  # Verificamos que la wallet destino exista y este habilitada
-  begin
-    destination_wallet = Wallet.find_by(cvu: destination_cvu)
-    if destination_wallet.nil?
-      status 404
-      content_type :json
-      return { errors: {destination: "La wallet destino no existe"} }.to_json
-  end
-
-  unless destination_wallet.enabled
-    status 403
-    content_type :json
-    return { errors: {destination: "La wallet destino está deshabilitada"} }.to_json
-  end
-rescue => e
-  status 500
-  return { errors: { debug: "Error al verificar la wallet destino: #{e.message}"}}.to_json
-end
-
   begin
     Transaction.create!(
         origin_cvu: origin_cvu,

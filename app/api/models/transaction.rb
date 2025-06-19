@@ -19,8 +19,12 @@ class Transaction < ActiveRecord::Base
       errors.add(:origin_cvu, Errors::TRANSACTION[:invalid_source][:message])
     end
 
-    if Wallet.find_by(cvu: destination_cvu).nil?
+    destination_wallet = Wallet.find_by(cvu: destination_cvu)
+
+    if destination_wallet.nil?
       errors.add(:destination_cvu, Errors::TRANSACTION[:invalid_destination][:message])
+    elsif destination_wallet.enabled == false
+      errors.add(:destination_cvu, "La caja de destino está deshabilitada, no puede recibir pagos.")
     end
 
     if origin_cvu == destination_cvu
