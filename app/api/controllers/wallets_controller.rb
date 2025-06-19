@@ -109,6 +109,7 @@ get "#{AppConfig::API_BASE_PATH}/wallets/cvu/:cvu" do
       cvu: wallet.cvu,
       alias: wallet.alias,
       type: wallet.type,
+      enabled: wallet.enabled,
       balance: wallet.balance,
       owner:{
         dni: wallet.owner.dni,
@@ -155,6 +156,7 @@ content_type :json
     cvu: wallet.cvu,
     alias: wallet.alias,
     balance: wallet.balance,
+    enabled: wallet.enabled,
     owner: wallet.owner.name
   }.to_json
 end
@@ -184,3 +186,25 @@ post "#{AppConfig::API_BASE_PATH}/wallets/:cvu/extraction" do
     halt 400, { error: e.message}.to_json
   end
 end
+
+# Deshabilitar una wallet
+patch "#{AppConfig::API_BASE_PATH}/wallets/:cvu/disable" do
+  #protected!
+  content_type :json
+
+  wallet = Wallet.find_by(cvu: params[:cvu])
+  halt 404, { error: 'Wallet no encontrada..'}.to_json unless wallet
+
+  # Aseguramos que el usuario tenga acceso
+  #unless wallet.users.include?(current_user)
+   #halt 403, { error: 'No autorizado para modificar esta wallet'}.to_json
+  #end 
+
+  begin 
+    wallet.disable!
+    { message: "Wallet #{wallet.enabled ? 'Habilitada' : 'Deshabilitada'} exitosamente", cvu: wallet.cvu}.to_json
+  rescue StandardError => e
+    halt 422, { error: e.message}.to_json
+  end
+end
+

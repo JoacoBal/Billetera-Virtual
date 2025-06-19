@@ -49,6 +49,13 @@ class Wallet < ActiveRecord::Base
     self.balance # devuelve el nuevo balance
   end
 
+  # Metodo para deshabilitar/habilitar una wallet
+  def disable!
+    update!(enabled: !enabled)
+  end 
+
+  
+
   private
   # Validates that a user can only have one wallet of type 'principal'.
   #
