@@ -174,7 +174,7 @@ end
 
 post "#{AppConfig::API_BASE_PATH}/wallets/edit" do
   protected!
-
+  user = current_user
   data = JSON.parse(request.body.read)
   cvu = data["cvu"]
   new_members_emails = data["members"]&.map(&:strip)&.map(&:downcase)&.uniq
@@ -186,6 +186,9 @@ post "#{AppConfig::API_BASE_PATH}/wallets/edit" do
 
   wallet = Wallet.find_by(cvu: cvu)
   halt 404, { errors: { general: "La caja no fue encontrada" } }.to_json unless wallet
+  
+  halt 404, { errors: { general: "No tienes permisos para editar una caja que no te pertenece." } }.to_json unless wallet.dni_owner == user.dni
+
   begin
     ActiveRecord::Base.transaction do
       # Si hay alias, actualizarlo
@@ -240,7 +243,7 @@ post "#{AppConfig::API_BASE_PATH}/wallets/leave" do
   cvu = data["cvu"]
   wallet = Wallet.find_by(cvu: cvu)
   halt 404, { errors: { general: "La caja no fue encontrada" } }.to_json unless wallet
-  
+
   if wallet.type != "shared"
     halt 400, { errors: { general: "No puedes abandonar una caja si no es compartida." } }.to_json
   end
