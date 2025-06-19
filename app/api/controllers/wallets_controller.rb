@@ -161,16 +161,16 @@ end
 
 # Extracción de dinero de una wallet
 post "#{AppConfig::API_BASE_PATH}/wallets/:cvu/extraction" do
-  #protected! # Para asegurar que está autenticado
+  protected! # Para asegurar que está autenticado
   content_type :json
 
   wallet = Wallet.find_by(cvu: params[:cvu])
   halt 404, { error: 'Wallet no encontrada'}.to_json unless wallet
 
   #Validar que este usuario tiene permitido operar con dicha wallet
-  #unless wallet.users.include?(current_user)
-  #  halt 403, { error: 'No autorizado para operar con esta wallet'}.to_json
-  #end
+  unless wallet.users.include?(current_user)
+    halt 403, { error: 'No autorizado para operar con esta wallet'}.to_json
+  end
 
   data = JSON.parse(request.body.read) rescue{}
   amount = data['amount'].to_f
