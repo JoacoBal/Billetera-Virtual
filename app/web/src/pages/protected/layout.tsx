@@ -6,7 +6,7 @@ import { Outlet, useNavigate } from 'react-router';
 import { SidebarComponent } from './components/Sidebar';
 
 export const ProtectedLayout = () => {
-    const { isAuthenticated } = useSession();
+    const { isAuthenticated, loading } = useSession();
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -14,7 +14,9 @@ export const ProtectedLayout = () => {
             navigate('/auth/login');
         }
     }, [isAuthenticated]);
-
+    if(loading) {
+        return(<>Cargando contenido...</>);
+    }
     return (
         <SidebarProvider>
             <SidebarComponent />

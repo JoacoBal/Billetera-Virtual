@@ -11,7 +11,7 @@ import type { Wallet } from "@/types"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useEffect, useState } from "react"
 import { useForm, useFormContext } from "react-hook-form"
-import { useNavigate } from "react-router"
+import { useNavigate, useSearchParams } from "react-router"
 import { toast } from "sonner"
 import { z } from "zod"
 
@@ -37,7 +37,7 @@ export const TransactionComponent = () => {
         const result = await performTransaction(values)
         setLoading(false);
         if (result.errors) {
-            if(result.errors.general) {
+            if (result.errors.general) {
                 toast.error(result.errors.general);
                 return;
             }
@@ -68,9 +68,17 @@ export const TransactionForm = () => {
     const {
         control,
         register,
+        setValue,
     } = useFormContext<TransactionFormValues>();
-
+    const [searchParams] = useSearchParams();
     const [options, setOptions] = useState<Partial<Wallet>[]>([]);
+
+    useEffect(() => {
+        const cvuFromUrl = searchParams.get('cvu');
+        if (cvuFromUrl) {
+            setValue('destination_cvu', cvuFromUrl);
+        }
+    }, [searchParams, setValue]);
 
     useEffect(() => {
         const fetchOptions = async () => {

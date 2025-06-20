@@ -51,7 +51,7 @@ const WalletSettingsComponent = ({ wallet }: { wallet: Partial<Wallet> }) => {
     mode: 'onTouched',
     resolver: zodResolver(walletCreationSchema),
     defaultValues: {
-      people: (wallet as any).members ? (wallet as any).members.map(email => ({ email })) : []
+      people: (wallet as any).members ? ((wallet as any).members as string[]).map(email => ({ email })) : []
     }
   });
   const { setError } = form;

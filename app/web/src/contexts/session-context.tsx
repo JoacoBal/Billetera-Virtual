@@ -28,6 +28,7 @@ export const SessionProvider = ({ children }: { children: ReactNode }) => {
   const [token, setToken] = useState<string | null>(
     typeof window !== 'undefined' ? localStorage.getItem('jwt') : null
   );
+  const [valid, setValid] = useState<boolean | undefined>(token ? true : false);
 
   const onSignIn = (newToken: string) => {
     localStorage.setItem('jwt', newToken);
@@ -52,6 +53,7 @@ export const SessionProvider = ({ children }: { children: ReactNode }) => {
           Authorization: `Bearer ${token}`,
         },
       });
+      setValid(undefined)
       return res.data;
     },
     enabled: !!token,
@@ -65,7 +67,7 @@ export const SessionProvider = ({ children }: { children: ReactNode }) => {
         user: user ?? null,
         loading,
         error: error as Error | null,
-        isAuthenticated: !!user,
+        isAuthenticated: valid === undefined ? !!user : valid,
         token,
         onSignIn,
         onSignOut,

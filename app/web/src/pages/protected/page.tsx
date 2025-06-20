@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { WalletDialog } from "./components/WalletCreationForm";
 import { WalletSettingsDialog } from "./components/WalletSettingsForm";
+import { WalletQrDialog } from "./components/WalletQrDialog";
 
 
 // Función para elegir ícono según tipo de wallet
@@ -73,7 +74,8 @@ const WalletsDisplay = () => {
                                 <div className="flex items-center justify-between">
                                     <CardTitle className="text-lg font-semibold">
                                         {wallet.type}
-                                        <WalletSettingsDialog wallet={wallet} />
+                                        <WalletSettingsDialog wallet={wallet}/>
+                                        <WalletQrDialog wallet={wallet}/>
                                     </CardTitle>
                                     {getIcon(wallet.type)}
                                 </div>
