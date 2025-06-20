@@ -1,14 +1,13 @@
-import { createWallet, editWallet } from "@/api/walletsApi";
+import { editWallet } from "@/api/walletsApi";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useSession } from "@/contexts/session-context";
 import type { Wallet } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Plus, Settings, X } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useFieldArray, useForm, useFormContext } from "react-hook-form";
 import { useNavigate } from "react-router";
 import { toast } from "sonner";

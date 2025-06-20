@@ -18,6 +18,7 @@ Dir["./controllers/**/*.rb"].each { |file| require_relative file }
 
 class App < Sinatra::Application
   configure :development do
+    set :bind, '0.0.0.0'
     enable :logging
     logger = Logger.new(STDOUT)
     logger.level = Logger::DEBUG if development?

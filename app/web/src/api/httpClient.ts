@@ -1,7 +1,8 @@
 import axios from "axios";
-
+// Para poder conectarse desde otros dispositivos que compartan red y poder hacer pruebas
+const host = window.location.hostname;
 export const httpClient = axios.create({
-    baseURL: 'http://localhost:8000/api/v1',
+  baseURL: `http://${host}:8000/api/v1`,
 });
 
 // Añadir el token en cada request si existe
