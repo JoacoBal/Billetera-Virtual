@@ -31,23 +31,31 @@ API:
    ```bash
    docker compose up
    ```
-3. **Crea la base de datos**
+3. **Crea la base de datos** ¡IMPORTANTE!
    ```bash
-   docker compose exec app bundle exec rake db:create
+   docker compose exec api bundle exec rake db:create
    ```
+IMPORTANTE: Solo crear la base de datos en caso de que no este ya creada, en ese caso incluso se podría hacer que este comando sea más completo e incluya todas las tareas:
+```bash
+docker compose exec api bundle exec rake db:drop db:create db:migrate
+```
+Sólo sería útil la primera vez que se inicializa la app, ya que resetea la base de datos, primero la borra, luego la vuelve a crear y por último ejecuta las migraciones.
 
 El servicio estará inicializado en http://localhost:8000
 
 Para acceder a la consola interactiva de Ruby y probar lógica:
 ```bash
-docker compose exec app bundle exec irb -I. -r server.rb
+docker compose exec api bundle exec irb -I. -r server.rb
 ```
 
 Servidor WEB:
 
 2. **Iniciar entorno de desarrollo**
    ```bash
+   npm i
    npm run dev
+
+La instrucción 'npm i' se encargará de instalar las dependencias necesarias para frontend, la instrucción 'npm run dev' ejecutará el servidor en el entorno de desarrollo
 El Frontend no está dockerizado.
 <h2>📖 Documentation </h2>
 
