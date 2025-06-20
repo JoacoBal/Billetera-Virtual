@@ -41,7 +41,7 @@ docker compose exec api bundle exec rake db:drop db:create db:migrate
 ```
 Sólo sería útil la primera vez que se inicializa la app, ya que resetea la base de datos, primero la borra, luego la vuelve a crear y por último ejecuta las migraciones.
 
-El servicio estará inicializado en http://localhost:8000
+El servicio estará inicializado en http://localhost:8000 (o cualquier dirección ipv4, esto para facilitar la presentación del proyecto en clase)
 
 Para acceder a la consola interactiva de Ruby y probar lógica:
 ```bash
@@ -56,6 +56,9 @@ Servidor WEB:
    npm run dev
 
 La instrucción 'npm i' se encargará de instalar las dependencias necesarias para frontend, la instrucción 'npm run dev' ejecutará el servidor en el entorno de desarrollo
+
+El servicio estará inicializado en http://localhost:5173 (o cualquier dirección ipv4, esto para facilitar la presentación del proyecto en clase)
+
 El Frontend no está dockerizado.
 <h2>📖 Documentation </h2>
 
