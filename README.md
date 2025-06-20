@@ -31,7 +31,7 @@ API:
    ```bash
    docker compose up
    ```
-3. **Crea la base de datos** ¡IMPORTANTE!
+3. **Crea la base de datos** ¡CUIDADO! (leer abajo)
    ```bash
    docker compose exec api bundle exec rake db:create
    ```
